@@ -1,0 +1,62 @@
+{
+  "name": "creemseed",
+  "version": "0.1.0",
+  "private": true,
+  "description": "An English-first Next.js starter with Better Auth and Creem subscriptions.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@12.4.2",
+  "engines": {
+    "node": "^22.18.0 || ^24.0.0"
+  },
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "dev": "node scripts/dev.mjs",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "next typegen && tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "node --conditions=react-server --import tsx --test tests/*.test.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:studio": "drizzle-kit studio",
+    "admin:grant": "tsx scripts/admin.ts grant",
+    "admin:revoke": "tsx scripts/admin.ts revoke",
+    "env:check": "node --conditions=react-server --import tsx scripts/check-env.ts",
+    "security:check": "node scripts/security-check.mjs",
+    "billing:catalog": "node --conditions=react-server --import tsx scripts/check-catalog.ts"
+  },
+  "dependencies": {
+    "@better-auth/drizzle-adapter": "1.7.7",
+    "@fontsource-variable/manrope": "5.3.0",
+    "@tailwindcss/postcss": "4.1.7",
+    "@vercel/analytics": "2.0.1",
+    "@vercel/speed-insights": "2.0.0",
+    "better-auth": "1.7.7",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "dotenv": "16.5.0",
+    "drizzle-orm": "0.45.4",
+    "lucide-react": "0.511.0",
+    "next": "16.4.0",
+    "postgres": "3.4.5",
+    "posthog-js": "1.438.9",
+    "radix-ui": "1.4.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "0.0.1",
+    "tailwind-merge": "3.3.0",
+    "tailwindcss": "4.1.7",
+    "zod": "3.24.4"
+  },
+  "devDependencies": {
+    "@types/node": "22.15.18",
+    "@types/react": "19.1.4",
+    "@types/react-dom": "19.1.5",
+    "drizzle-kit": "0.31.11",
+    "prettier": "3.9.10",
+    "tsx": "4.21.0",
+    "typescript": "5.8.3"
+  }
+}

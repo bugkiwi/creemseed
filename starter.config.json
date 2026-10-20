@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "name": "Creemseed",
+  "description": "A small foundation for your next paid product.",
+  "database": "docker",
+  "auth": ["email"],
+  "email": "console",
+  "billing": "subscriptions",
+  "analytics": {
+    "posthog": false,
+    "vercel": false,
+    "speedInsights": false
+  },
+  "deployment": "vercel"
+}

@@ -1,0 +1,9 @@
+node_modules/
+.next/
+.local/
+.git/
+.env*
+pnpm-lock.yaml
+lib/db/migrations/
+next-env.d.ts
+*.tsbuildinfo
