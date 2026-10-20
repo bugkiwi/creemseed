@@ -1,10 +1,12 @@
 # Security policy
 
-Please report suspected vulnerabilities privately through this repository's GitHub **Security → Report a vulnerability** feature, when enabled. Otherwise contact a repository maintainer privately. Do not open a public issue containing credentials, personal data or exploit details.
+Please report suspected vulnerabilities privately through [GitHub private vulnerability reporting](https://github.com/bugkiwi/creemseed/security/advisories/new). Enable the equivalent feature when publishing your own fork. Do not open a public issue containing credentials, personal data or exploit details.
 
 Only the latest release is maintained. This starter has not received an independent security audit. Local automated checks do not certify a deployed application or payment integration.
 
 ## Defaults and boundaries
+
+- The public showcase uses explicit `DEMO_MODE=true`. Authentication, billing, admin mutation and webhook routes reject requests before body parsing, session lookup or provider access; private pages return no session. This mode requires no database or provider keys. The normal application default remains `DEMO_MODE=false`; set the flag at both build and runtime and rebuild when switching.
 
 - No shared credentials, seeded admin or browser endpoint that grants administrator access. `admin:grant` requires an existing verified account, records an audit entry and revokes its sessions. Admin requests read current database roles.
 - Better Auth owns password hashing, sessions, email verification, password reset and OAuth. Email/password requires verification. Console email only runs on development localhost; public deployments need transactional email. Account linking is disabled.

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { requireVerifiedUser } from '@/lib/auth/session';
+import { assertAppMode } from '@/lib/deployment';
 import { assertOrigin, failure, HttpError, jsonBody, response } from '@/lib/http';
 import { limitMutation } from '@/lib/rate-limit';
 import {
@@ -17,6 +17,8 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 export async function POST(request: Request, context: { params: Promise<{ action: string }> }) {
   try {
+    assertAppMode();
+    const { requireVerifiedUser } = await import('@/lib/auth/session');
     assertOrigin(request);
     const user = await requireVerifiedUser();
     await limitMutation(`billing:${user.id}`);

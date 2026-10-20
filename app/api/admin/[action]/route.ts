@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { requireAdmin } from '@/lib/auth/session';
+import { assertAppMode } from '@/lib/deployment';
 import { assertOrigin, failure, HttpError, jsonBody, response } from '@/lib/http';
 import { limitMutation } from '@/lib/rate-limit';
 import {
@@ -16,6 +16,8 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 export async function POST(request: Request, context: { params: Promise<{ action: string }> }) {
   try {
+    assertAppMode();
+    const { requireAdmin } = await import('@/lib/auth/session');
     assertOrigin(request);
     const admin = await requireAdmin();
     await limitMutation(`admin:${admin.id}`, 15);

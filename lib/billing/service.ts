@@ -1,4 +1,5 @@
 import 'server-only';
+import { assertAppMode } from '@/lib/deployment';
 import { randomUUID } from 'node:crypto';
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { db, type Transaction } from '@/lib/db';
@@ -44,6 +45,7 @@ export async function audit(
   await db.insert(auditLogs).values({ id: randomUUID(), actorId, action, targetId, details });
 }
 export function assertBillingEnabled() {
+  assertAppMode();
   if (process.env.BILLING_ENABLED !== 'true')
     throw new HttpError(503, 'Billing has not been enabled yet.');
   environment();

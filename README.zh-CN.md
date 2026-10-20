@@ -4,6 +4,10 @@
 
 默认英文、MIT 开源的 Next.js Web 模板，使用 Better Auth 管理身份、Creem 收款，内置用户工作台和管理员后台。
 
+[在线演示](https://creemseed.vercel.app) · [使用此模板](https://github.com/bugkiwi/creemseed/generate) · [GitHub](https://github.com/bugkiwi/creemseed)
+
+[![部署到 Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbugkiwi%2Fcreemseed&project-name=creemseed&repository-name=creemseed&env=DEMO_MODE%2CBILLING_ENABLED&envDefaults=%7B%22DEMO_MODE%22%3A%22true%22%2C%22BILLING_ENABLED%22%3A%22false%22%7D&envDescription=Public+demo+only.+Accounts%2C+billing%2C+and+webhooks+are+disabled.+Follow+the+deployment+guide+to+enable+your+own+application.&envLink=https%3A%2F%2Fgithub.com%2Fbugkiwi%2Fcreemseed%2Fblob%2Fmain%2Fdocs%2Fdeployment.md)
+
 [English](./README.md) · [架构](./docs/architecture.md) · [计费设计](./docs/billing.md) · [安全](./SECURITY.md) · [AI 安装提示词](./prompts/setup.zh-CN.md)
 
 ## 包含什么
@@ -19,13 +23,21 @@
 
 计费单位为个人账户。当前精简版不包含团队、席位、按量计费、试用期或任务平台。内置价格是模板的示例配置，不代表本仓库正在销售某项服务。本项目是独立社区模板，并非 Creem 官方产品。
 
+## 在线演示与 Vercel
+
+[公开演示站](https://creemseed.vercel.app) 使用 `DEMO_MODE=true`，展示模板的公开页面，不收集注册账户或接受付款，也不需要数据库和 Provider 密钥。演示模式下，认证、计费、后台写操作和 Webhook API 返回 HTTP 503，私有页面跳转至登录说明页。
+
+部署按钮会创建**你自己的副本**，只预填 `DEMO_MODE=true`、`BILLING_ENABLED=false` 两个公开开关；演示地址可从 Vercel 的生产域名元数据自动推导。运行完整应用时，设置 `DEMO_MODE=false`，在本地选择场景并配置独立的 Postgres、认证、邮件和 Creem 凭据，再按[部署指南](./docs/deployment.md)操作。切换模式后重新构建。
+
 ## 通过 CLI 开始
 
 需要 **Node.js 22.18+ 或 24**、**pnpm 12.4.2**；选择本地 Postgres 时需要 Docker。
 
-下载或克隆仓库后，在根目录执行一条命令：
+新建自己的仓库可直接点击[使用此模板](https://github.com/bugkiwi/creemseed/generate)。在本地体验时，克隆公开仓库并运行向导：
 
 ```sh
+git clone https://github.com/bugkiwi/creemseed.git
+cd creemseed
 node scripts/setup.mjs
 ```
 

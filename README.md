@@ -4,6 +4,10 @@
 
 An English-first, MIT-licensed Next.js starter for products paid through Creem, with Better Auth, Postgres, a customer workspace and an admin desk.
 
+[Live demo](https://creemseed.vercel.app) · [Use this template](https://github.com/bugkiwi/creemseed/generate) · [GitHub](https://github.com/bugkiwi/creemseed)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbugkiwi%2Fcreemseed&project-name=creemseed&repository-name=creemseed&env=DEMO_MODE%2CBILLING_ENABLED&envDefaults=%7B%22DEMO_MODE%22%3A%22true%22%2C%22BILLING_ENABLED%22%3A%22false%22%7D&envDescription=Public+demo+only.+Accounts%2C+billing%2C+and+webhooks+are+disabled.+Follow+the+deployment+guide+to+enable+your+own+application.&envLink=https%3A%2F%2Fgithub.com%2Fbugkiwi%2Fcreemseed%2Fblob%2Fmain%2Fdocs%2Fdeployment.md)
+
 [简体中文](./README.zh-CN.md) · [Architecture](./docs/architecture.md) · [Billing](./docs/billing.md) · [Security](./SECURITY.md) · [AI setup prompt](./prompts/setup.md)
 
 ## What you get
@@ -19,13 +23,21 @@ An English-first, MIT-licensed Next.js starter for products paid through Creem, 
 
 Personal accounts are the billing unit. Teams, seats, metered billing, trials and a job platform are outside this small starter. The built-in prices are example product configuration, not a service being offered by this repository. This is an independent community starter, not an official Creem product.
 
+## Public demo and Vercel
+
+The [hosted demo](https://creemseed.vercel.app) runs with `DEMO_MODE=true`. It shows the public template pages, accepts no registrations or payments, and requires no database or provider credentials. All authentication, billing, admin mutation and webhook APIs return HTTP 503 in this mode; private pages redirect to the sign-in explanation.
+
+The Deploy button creates **your own copy** and pre-fills only two public settings: `DEMO_MODE=true` and `BILLING_ENABLED=false`. Demo origins can use Vercel’s production-domain metadata automatically. For a complete application, set `DEMO_MODE=false`, choose your scenario locally, configure independent Postgres/auth/email/Creem settings, and follow [the deployment guide](./docs/deployment.md). Rebuild after changing modes.
+
 ## Start with the CLI
 
 Prerequisites: **Node.js 22.18+ or 24**, **pnpm 12.4.2**, and Docker if you want local Postgres.
 
-Download or clone this repository, then run one command from its root:
+For a new repository, choose [Use this template](https://github.com/bugkiwi/creemseed/generate). To explore locally, clone the published source and run the wizard:
 
 ```sh
+git clone https://github.com/bugkiwi/creemseed.git
+cd creemseed
 node scripts/setup.mjs
 ```
 
@@ -128,7 +140,7 @@ The repository includes tests for billing policy, raw signatures, setup validati
 
 [Dearsong / Dearune](https://dearune.com) is a personalized song product using this technology stack and Creem one-time payments. It illustrates a real product use case; it is not evidence that this starter's recurring billing has completed live verification.
 
-For a public GitHub template release, follow [docs/publishing.md](./docs/publishing.md).
+For publishing your own fork or template, follow [docs/publishing.md](./docs/publishing.md).
 
 ## License
 

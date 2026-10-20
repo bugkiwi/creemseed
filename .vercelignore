@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+.local
+.local/**
+.git/
+.next/
+node_modules/
+coverage/
+*.tsbuildinfo
+*.log
+*.pem
+*.key
+*.p12
+*.pfx

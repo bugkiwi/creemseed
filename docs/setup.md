@@ -2,6 +2,12 @@
 
 Both installation paths call `scripts/setup.mjs` and `scripts/setup-schema.mjs`. There is no separate AI-generated installer with different defaults.
 
+## Get the source
+
+Use [bugkiwi/creemseed](https://github.com/bugkiwi/creemseed/generate) to create your own repository, or clone `https://github.com/bugkiwi/creemseed.git` as a local template. The repository is public; no npm launcher is required.
+
+The hosted site and Deploy button use `DEMO_MODE=true` for a credential-free public preview. Normal CLI installation generates `.env` with `DEMO_MODE=false` so you can develop a full application. Keep that mode choice explicit in AI-assisted setup.
+
 ## Interactive
 
 ```sh

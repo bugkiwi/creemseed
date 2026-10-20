@@ -43,6 +43,8 @@ try {
     'starter.config.json',
     'tsconfig.json',
     'next.config.ts',
+    'vercel.json',
+    '.vercelignore',
     'postcss.config.mjs',
     'drizzle.config.ts',
     'components.json',

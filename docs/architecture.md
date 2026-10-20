@@ -40,6 +40,10 @@ A database row lock on the owner serializes billing transitions across applicati
 
 There is no assumed cross-system transaction or automatic exactly-once HTTP delivery. Ambiguous provider mutations require reconciliation; external POSTs are not automatically repeated.
 
+## Public showcase
+
+`DEMO_MODE=true` is a server-side deployment guard, independent of presentation or billing flags. It blocks every mutation/API family and avoids session lookup. Demo-specific calls to action link to the upstream template or deployment flow. It does not create a demo admin, bypass an authorization rule, or reuse a customer database. The full application remains the default when this environment flag is absent or false. Rebuild when changing modes so prerendered pages and server runtime agree.
+
 ## Analytics and deployment
 
 PostHog, Vercel Analytics and Speed Insights are independently selectable and disabled initially. SDK modules load only after consent on an explicit public-route allowlist. Browser opt-out is honored. No analytics identify users or capture private route query strings. Dependencies are present so enabling a feature is a configuration change; disabled integrations make no runtime analytics requests.

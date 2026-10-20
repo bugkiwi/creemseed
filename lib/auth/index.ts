@@ -1,4 +1,5 @@
 import 'server-only';
+import { assertAppMode } from '@/lib/deployment';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from '@better-auth/drizzle-adapter';
 import { db } from '@/lib/db';
@@ -87,4 +88,7 @@ export function createAuth(configuration = site, deliver = sendAuthEmail) {
   });
 }
 let instance: ReturnType<typeof createAuth> | undefined;
-export const getAuth = () => (instance ??= createAuth());
+export const getAuth = () => {
+  assertAppMode();
+  return (instance ??= createAuth());
+};

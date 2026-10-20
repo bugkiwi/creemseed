@@ -3,8 +3,11 @@ import { ArrowUpRight, Check } from 'lucide-react';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { Button } from '@/components/ui/button';
+import { isDemoMode } from '@/lib/deployment';
+import { project, deployUrl } from '@/lib/project';
 
 export default function Home() {
+  const demo = isDemoMode();
   return (
     <>
       <SiteHeader />
@@ -27,9 +30,15 @@ export default function Home() {
             </p>
             <div className="button-row">
               <Button asChild>
-                <Link href="/sign-up">
-                  Create your workspace <ArrowUpRight size={17} />
-                </Link>
+                {demo ? (
+                  <a href={project.template}>
+                    Use this template <ArrowUpRight size={17} />
+                  </a>
+                ) : (
+                  <Link href="/sign-up">
+                    Create your workspace <ArrowUpRight size={17} />
+                  </Link>
+                )}
               </Button>
               <Link className="plain-link" href="/pricing">
                 Explore plans <span aria-hidden="true">→</span>
@@ -115,9 +124,15 @@ export default function Home() {
           <p className="eyebrow">YOUR IDEA GOES HERE</p>
           <h2>Give it a good beginning.</h2>
           <Button asChild>
-            <Link href="/sign-up">
-              Get started <ArrowUpRight size={17} />
-            </Link>
+            {demo ? (
+              <a href={deployUrl}>
+                Deploy to Vercel <ArrowUpRight size={17} />
+              </a>
+            ) : (
+              <Link href="/sign-up">
+                Get started <ArrowUpRight size={17} />
+              </Link>
+            )}
           </Button>
         </section>
       </main>

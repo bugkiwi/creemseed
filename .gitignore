@@ -20,3 +20,4 @@ next-env.d.ts
 postgres_data/
 .idea/
 .vscode/
+.vercel

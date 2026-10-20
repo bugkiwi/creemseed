@@ -1,5 +1,8 @@
 import { enabledPlans, money } from '@/lib/billing/plans';
 import { BillingAction } from './billing-actions';
+import { isDemoMode } from '@/lib/deployment';
+import { deployUrl } from '@/lib/project';
+import { Button } from './ui/button';
 
 export function Pricing() {
   return (
@@ -26,9 +29,15 @@ export function Pricing() {
               </li>
             ))}
           </ul>
-          <BillingAction action="billing/checkout" body={{ plan: plan.key }}>
-            Choose {plan.label.toLowerCase()} <span aria-hidden="true">↗</span>
-          </BillingAction>
+          {isDemoMode() ? (
+            <Button asChild>
+              <a href={deployUrl}>Deploy your copy ↗</a>
+            </Button>
+          ) : (
+            <BillingAction action="billing/checkout" body={{ plan: plan.key }}>
+              Choose {plan.label.toLowerCase()} <span aria-hidden="true">↗</span>
+            </BillingAction>
+          )}
         </article>
       ))}
     </div>

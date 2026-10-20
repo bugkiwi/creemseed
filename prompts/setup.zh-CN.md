@@ -3,7 +3,8 @@
 将以下内容交给能访问本地仓库的编码助手：
 
 ```text
-请为我的新项目安装此 Creemseed 模板。
+请为我的新项目安装此 Creemseed 模板。源仓库是 https://github.com/bugkiwi/creemseed。
+如果还没有本地副本，先询问目标空目录，再克隆仓库；已有副本则直接使用。
 
 先阅读 AGENTS.md、SECURITY.md、docs/setup.md、scripts/setup-schema.mjs。
 应用配置前，先询问以下实际场景，可合并简短问题，并说明选项的影响：
@@ -30,6 +31,7 @@
 缺少前置工具时用 --skip-install 或 --skip-db，并列出剩余的准确命令，
 不要声称外部账号已经配置成功。
 
+完整应用使用 DEMO_MODE=false；如果我只需要不接账号和支付的公开演示，则选择 DEMO_MODE=true。
 初始保持 CREEM_ENVIRONMENT=test、BILLING_ENABLED=false。未经我明确指示，
 不要创建正式商品、公开部署、授予管理员、发布 GitHub/npm 或真实收费。
 说明如何为我已经验证的账户运行 admin:grant。

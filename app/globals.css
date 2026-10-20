@@ -96,6 +96,18 @@ em {
   width: min(1200px, calc(100% - 96px));
   margin-inline: auto;
 }
+.demo-banner {
+  padding: 9px 20px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  text-align: center;
+  font-size: 11px;
+}
+.demo-banner a {
+  margin-left: 8px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .eyebrow {
   font-size: 10px;
   letter-spacing: 0.16em;

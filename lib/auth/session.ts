@@ -6,8 +6,10 @@ import { getAuth } from '.';
 import { db } from '@/lib/db';
 import { user } from '@/lib/db/schema';
 import { HttpError } from '@/lib/http';
+import { isDemoMode } from '@/lib/deployment';
 
 export const currentUser = cache(async () => {
+  if (isDemoMode()) return null;
   const session = await getAuth().api.getSession({ headers: await headers() });
   if (!session) return null;
   // Read authoritative roles on every request, including after admin revocation.

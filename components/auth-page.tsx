@@ -2,6 +2,9 @@ import Link from 'next/link';
 import { site, isLocal } from '@/lib/config';
 import { AuthForm } from './auth-form';
 import { Brand } from './brand';
+import { isDemoMode } from '@/lib/deployment';
+import { project, deployUrl } from '@/lib/project';
+import { Button } from './ui/button';
 
 export function AuthPage({
   mode,
@@ -41,12 +44,27 @@ export function AuthPage({
               ? 'One account. Your workspace and billing, together.'
               : 'A little less setup. A little more progress.'}
           </p>
-          <AuthForm
-            mode={mode}
-            token={token}
-            providers={site.auth.filter((p) => p !== 'email')}
-            emailEnabled={site.auth.includes('email') && (isLocal() || site.email === 'resend')}
-          />
+          {isDemoMode() ? (
+            <div className="form-stack">
+              <p className="notice">
+                This public demo does not create accounts or accept payments. Deploy your own copy
+                to use authentication and billing.
+              </p>
+              <Button asChild>
+                <a href={deployUrl}>Deploy your copy ↗</a>
+              </Button>
+              <a className="plain-link" href={project.repository}>
+                View the source on GitHub →
+              </a>
+            </div>
+          ) : (
+            <AuthForm
+              mode={mode}
+              token={token}
+              providers={site.auth.filter((p) => p !== 'email')}
+              emailEnabled={site.auth.includes('email') && (isLocal() || site.email === 'resend')}
+            />
+          )}
         </div>
       </div>
     </main>

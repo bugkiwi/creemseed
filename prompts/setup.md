@@ -3,7 +3,9 @@
 Use this prompt in a coding assistant with local repository access:
 
 ```text
-Set up this Creemseed starter for my own project.
+Set up this Creemseed starter for my own project. The source repository is
+https://github.com/bugkiwi/creemseed. If there is no local checkout, ask for an empty
+target directory and clone it first; otherwise use the existing checkout.
 
 Read AGENTS.md, SECURITY.md, docs/setup.md and scripts/setup-schema.mjs first.
 Ask me the following choices before applying configuration; group short questions
@@ -33,7 +35,9 @@ Preserve existing .env; explain any local values I must update after changing ch
 If prerequisites are unavailable, use --skip-install or --skip-db and identify the
 remaining exact commands. Do not pretend an external service has been configured.
 
-Keep CREEM_ENVIRONMENT=test and BILLING_ENABLED=false initially. Do not create live
+Use DEMO_MODE=false for a complete application. If I only want a credential-free
+public showcase, choose DEMO_MODE=true. Keep CREEM_ENVIRONMENT=test and
+BILLING_ENABLED=false initially. Do not create live
 products, deploy publicly, grant admin, publish GitHub/npm, or make real charges
 without my explicit instruction. Ask me to run admin:grant for my verified account.
 
