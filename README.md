@@ -138,7 +138,11 @@ The repository includes tests for billing policy, raw signatures, setup validati
 
 ## Representative project
 
-[Dearsong / Dearune](https://dearune.com) is a personalized song product using this technology stack and Creem one-time payments. It illustrates a real product use case; it is not evidence that this starter's recurring billing has completed live verification.
+<a href="https://dearune.com">
+  <img src="https://dearune.com/brand/dearune-mark.png" alt="Dearune" width="64" />
+</a>
+
+[Dearune](https://dearune.com)
 
 For publishing your own fork or template, follow [docs/publishing.md](./docs/publishing.md).
 

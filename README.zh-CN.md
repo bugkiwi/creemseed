@@ -138,7 +138,11 @@ node scripts/setup.mjs --config /absolute/path/to/choices.json --yes
 
 ## 代表项目
 
-[Dearsong / Dearune](https://dearune.com) 是使用此技术栈并接入 Creem 一次性收款的专属歌曲产品，可作为真实业务形态参考；它不能证明本模板的订阅收款已完成正式环境验证。
+<a href="https://dearune.com">
+  <img src="https://dearune.com/brand/dearune-mark.png" alt="Dearune" width="64" />
+</a>
+
+[Dearune](https://dearune.com)
 
 公开发布为 GitHub 模板的步骤见 [docs/publishing.md](./docs/publishing.md)。
 
