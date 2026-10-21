@@ -16,6 +16,7 @@ test(
     assert.ok(['localhost', '127.0.0.1', '[::1]'].includes(target.hostname));
     assert.match(target.pathname, /^\/creemseed_test(?:_[a-z0-9]+)?$/);
     process.env.DATABASE_URL = target.toString();
+    process.env.MIGRATION_DATABASE_URL = target.toString();
     process.env.DEMO_MODE = 'false';
     process.env.CREEM_ENVIRONMENT = 'test';
     process.env.CREEM_API_KEY = 'creem_test_' + 'fixture';

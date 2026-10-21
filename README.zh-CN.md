@@ -6,6 +6,8 @@
 
 [在线演示](https://creemseed.vercel.app) · [使用此模板](https://github.com/bugkiwi/creemseed/generate) · [GitHub](https://github.com/bugkiwi/creemseed)
 
+[环境配置指南（在线）](https://creemseed.vercel.app/docs?lang=zh-CN) · [环境指南 Markdown](./docs/environment.zh-CN.md)
+
 [![部署到 Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbugkiwi%2Fcreemseed&project-name=creemseed&repository-name=creemseed&env=DEMO_MODE%2CBILLING_ENABLED&envDefaults=%7B%22DEMO_MODE%22%3A%22true%22%2C%22BILLING_ENABLED%22%3A%22false%22%7D&envDescription=Public+demo+only.+Accounts%2C+billing%2C+and+webhooks+are+disabled.+Follow+the+deployment+guide+to+enable+your+own+application.&envLink=https%3A%2F%2Fgithub.com%2Fbugkiwi%2Fcreemseed%2Fblob%2Fmain%2Fdocs%2Fdeployment.md)
 
 [English](./README.md) · [架构](./docs/architecture.md) · [计费设计](./docs/billing.md) · [安全](./SECURITY.md) · [AI 安装提示词](./prompts/setup.zh-CN.md)
@@ -90,7 +92,7 @@ AI 需要先询问表格中的选择，包括仅社交登录、已有数据库�
 node scripts/setup.mjs --config /absolute/path/to/choices.json --yes
 ```
 
-配置结构、无人值守安装与恢复见 [docs/setup.md](./docs/setup.md)。`--yes` 必须提供完整配置，不会静默决定计费或认证方式。可通过 `--skip-install`、`--skip-db` 推迟相应步骤。
+配置结构、无人值守安装与恢复见 [docs/setup.md](./docs/setup.md)；每个 `.env` 变量的获取位置和 Vercel 设置步骤见[在线环境配置指南](https://creemseed.vercel.app/docs?lang=zh-CN)。`--yes` 必须提供完整配置，不会静默决定计费或认证方式。可通过 `--skip-install`、`--skip-db` 推迟相应步骤。
 
 ## 接入 Creem
 

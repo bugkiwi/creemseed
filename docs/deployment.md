@@ -1,5 +1,7 @@
 # Deployment
 
+See the [environment configuration guide](https://creemseed.vercel.app/docs) for each `.env` value, provider dashboard path, Test/Live separation, and Vercel environment steps.
+
 ## Online test app and credential-free copies
 
 Upstream source: [bugkiwi/creemseed](https://github.com/bugkiwi/creemseed). The [online test app](https://creemseed.vercel.app) uses a dedicated Neon database, Better Auth, Resend and Creem Test Mode. It has no live charging configuration. Google OAuth remains limited to approved test users while the OAuth app is in testing.
@@ -26,7 +28,7 @@ Enabling billing is a separate action. Complete docs/release-checklist.md with y
 
 1. Replace example product names/prices and policy/contact placeholders. Configure email and optional OAuth apps.
 2. Set a dedicated public HTTPS `NEXT_PUBLIC_APP_URL`; use exact `/api/auth/callback/google` and `/api/auth/callback/github` callbacks for selected providers.
-3. Provision private Postgres. Use a runtime pooler for serverless connections. `prepare: false` supports transaction pooling. Give migration tooling a compatible migration connection; run `pnpm db:migrate` before promoting the release.
+3. Provision private Postgres. Use a runtime pooler for serverless connections. `prepare: false` supports transaction pooling. Set `MIGRATION_DATABASE_URL` to the direct/unpooled URL for the same database so the migration advisory lock uses a persistent session; it falls back to `DATABASE_URL` when omitted. Run `pnpm db:migrate` before promoting the release.
 4. Configure a fresh `BETTER_AUTH_SECRET` of at least 32 random characters, never an example or a reused local value. Set secrets directly in the deployment secret manager.
 5. Select a real mail transport for deployed password login. Verify sender-domain DNS and delivery; do not turn console links into a production fallback.
 6. Start with Creem test mode. Register `/api/webhooks/creem` and complete docs/release-checklist.md. Use separate live configuration and data when enabling real charges.

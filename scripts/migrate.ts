@@ -4,7 +4,9 @@ import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
 import { requiredEnv } from '../lib/config';
 
-const client = postgres(requiredEnv('DATABASE_URL'), {
+// Prefer a direct/unpooled endpoint for session-level advisory locks. Runtime
+// traffic can continue using the pooled DATABASE_URL.
+const client = postgres(process.env.MIGRATION_DATABASE_URL?.trim() || requiredEnv('DATABASE_URL'), {
   max: 1,
   prepare: false,
   onnotice: () => {},
