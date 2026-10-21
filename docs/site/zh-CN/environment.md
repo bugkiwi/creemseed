@@ -102,10 +102,45 @@ Creem 后台入口和 API key 位置见官方[后台指南](https://docs.creem.i
 
 只有在 `starter.config.json` 的 `auth` 数组中加入 `google` 或 `github` 并重新部署后，登录页才会显示对应登录方式。若本地和生产回调域名不同，建议分别创建 OAuth 应用或客户端。
 
-| 变量                                        | 获取方式与设置步骤                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | 打开 [Google Cloud Console](https://console.cloud.google.com/)，创建或选择项目，配置 OAuth 同意屏幕，再创建 **Web application** 类型的 OAuth Client。将应用 origin 加入 Authorized JavaScript origins，将准确回调 `https://你的域名/api/auth/callback/google` 加入 Authorized redirect URIs。本地 origin 为 `http://localhost:3000`，回调为 `http://localhost:3000/api/auth/callback/google`。分别复制 Client ID 与 Client secret 到对应变量；只有 secret 需要保密。如果 OAuth 同意应用仍处于 Testing，需将测试账号加到 test users。参阅 Google 官方 [Web client 指南](https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid)和[Web server OAuth 指南](https://developers.google.com/identity/protocols/oauth2/web-server)。 |
-| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | 在 GitHub 打开 **Settings → Developer settings → OAuth Apps → New OAuth App**。Homepage URL 填应用 origin，Authorization callback URL 填 `https://你的域名/api/auth/callback/github`。本地或其他域名可另建 OAuth App。注册后生成 Client secret，将 Client ID 和 secret 分别写入对应的 Vercel 变量。参阅 GitHub 官方 [OAuth App 创建指南](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app)。                                                                                                                                                                                                                                                                                                                        |
+### 创建 Google OAuth 应用
+
+本模板使用 Better Auth 的服务端 OAuth 重定向流程。Google 会把用户送回下方准确的 callback 地址；项目没有使用 Google 浏览器端 JavaScript 登录 SDK。
+
+1. **在应用中选择 Google 登录。** 运行 `node scripts/setup.mjs` 并选择 Google，或在 `starter.config.json` → `auth` 中加入 `google`。配置时，`NEXT_PUBLIC_APP_URL` 应是当前环境的 origin。
+2. **创建或选择 Google Cloud 项目。** 打开 [Google Cloud Console](https://console.cloud.google.com/)，选择要用于此应用的项目，再进入 **Google Auth Platform**。如果平台要求注册应用，点击 **Get started**。
+3. **在 Branding 中填写应用信息。** 使用用户能识别的产品名称，选择有人定期查看的支持邮箱，并填写你控制域名上的公开主页、隐私政策和服务条款链接。控制台要求时，在 **Authorized domains** 中添加相应域名。不要填写占位链接或无法验证归属的域名。
+4. **选择受众。** 面向普通 Google 账号用户的产品选择 **External**。只有应用限定给自己 Google Workspace 组织内的成员时才选择 **Internal**。开发阶段保持 **Testing**，并在 **Audience → Test users** 中加入准备测试的 Google 账号。
+5. **仅申请必要的数据权限。** 模板的 Google provider 只请求登录所需的标准身份范围：`openid`、`email` 和 `profile`。除非产品确实需要，否则不要增加 Drive、Gmail 或其他 Google API 权限。Google 当前说明：Testing 通常最多支持 100 个已登记测试用户；仅使用基础身份范围的标准 Sign in with Google 请求不受测试用户名单限制，也不会遇到七天授权过期规则。开发阶段仍建议登记测试账号。若增加其他 scope，应重新检查 Audience 和 Verification Center 的要求。
+6. **创建 Web OAuth 客户端。** 进入 **Google Auth Platform → Clients → Create client**，选择 **Web application**，并取一个易于识别的名称，例如 `我的应用 – Production`。在 **Authorized redirect URIs** 中添加每个准确 callback：
+
+   ```text
+   http://localhost:3000/api/auth/callback/google
+   https://你的正式域名/api/auth/callback/google
+   ```
+
+   将正式域名替换成 `NEXT_PUBLIC_APP_URL` 中的主机名。仅在 Preview 域名固定且已经登记时才添加对应 callback。本地 localhost 可以使用 HTTP，部署地址必须使用 HTTPS。协议、域名、端口和路径都必须完全一致。**Authorized JavaScript origins** 用于浏览器端 Google API/Identity Services 集成；当前服务端 Better Auth 登录流程不需要填写它。
+
+7. **尽量为不同环境创建不同客户端。** 一个客户端可以登记多个准确 callback；分开创建 Local、Preview、Production 客户端更便于隔离凭据。不要使用通配域名，也不要把 client secret 放入浏览器代码。
+8. **保存凭据。** 创建客户端后立即复制 Client ID 与 Client secret。Google 可能只在创建时显示完整 secret；若丢失，可在 Cloud Console 创建或轮换 secret。本地值填写在 Git 忽略的 `.env` 中：
+
+   ```dotenv
+   GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+   GOOGLE_CLIENT_SECRET=your-client-secret
+   ```
+
+   Vercel 中进入 **Project → Settings → Environment Variables**，为对应环境添加这两个变量，然后重新部署。
+
+9. **验证 callback。** 在 `http://localhost:3000` 启动应用，从登录页完成 Google 登录；再到已登记的 HTTPS 部署环境测试一次。如果应用仍处于 Testing 且提示测试账号受限，请确认账号已加入 **Audience → Test users**。公开发布前通过 **Publish app** 切换到 Production，并完成 **Verification Center** 显示的事项；是否需要验证取决于应用品牌和请求的 scope。
+
+`GOOGLE_CLIENT_ID` 用于标识 OAuth 客户端，不是密码。`GOOGLE_CLIENT_SECRET` 是仅供服务端使用的密钥：不要提交到 Git、放入 `NEXT_PUBLIC_*` 变量，或粘贴到 AI prompt。步骤会随 Google 控制台更新；请同时参考 Google 官方 [Google Auth Platform 入门](https://support.google.com/cloud/answer/15544987?hl=en)、[Web 客户端和 Branding 指南](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid)、[Audience 与 Testing 状态说明](https://support.google.com/cloud/answer/15549945?hl=en)、[OAuth 客户端指南](https://support.google.com/cloud/answer/15549257?hl=en)和[应用验证说明](https://support.google.com/cloud/answer/13461325?hl=en)。
+
+### OAuth 环境变量
+
+| 变量                                        | 需要条件                 | 获取方式与设置步骤                                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GOOGLE_CLIENT_ID`                          | `auth` 中选择了 `google` | 从 **Google Auth Platform → Clients** 下对应的 Web 客户端复制。用于标识 OAuth 客户端，可以出现在浏览器端。                                                                                                                                                                                                                                                                                                       |
+| `GOOGLE_CLIENT_SECRET`                      | `auth` 中选择了 `google` | 创建 Web 客户端时复制并保存到本地 `.env` 或 Vercel 敏感环境变量中。仅服务端使用；丢失或泄露时应轮换。                                                                                                                                                                                                                                                                                                            |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | `auth` 中选择了 `github` | 在 GitHub 打开 **Settings → Developer settings → OAuth Apps → New OAuth App**。Homepage URL 填应用 origin，Authorization callback URL 填 `https://你的域名/api/auth/callback/github`。本地或其他域名可另建 OAuth App。注册后生成 Client secret，将匹配值填入本地 `.env` 或 Vercel。参阅 GitHub 官方 [OAuth App 创建指南](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app)。 |
 
 OAuth origin 和 callback 必须完全匹配，包括协议、域名、端口。不要随意登记 Preview 地址，除非该地址固定且确实由你控制。
 
