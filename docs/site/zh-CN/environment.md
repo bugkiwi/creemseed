@@ -1,6 +1,6 @@
 # 环境变量与第三方服务配置
 
-本指南逐项说明 `.env.example`、安装向导生成的本地变量，以及 Vercel 自动提供的值。也可以切换到 [English](./environment.en.md)，默认显示英文。
+本指南逐项说明 `.env.example`、安装向导生成的本地变量，以及 Vercel 自动提供的值。也可以切换到 [English](/docs/environment?lang=en)，默认显示英文。
 
 ## 开始前
 
@@ -12,7 +12,7 @@
 node scripts/setup.mjs
 ```
 
-AI 安装也会先询问相同的场景，并调用同一份安装脚本。无人值守安装见[安装指南](./setup.md)，部署步骤见[部署指南](./deployment.md)。
+AI 安装也会先询问相同的场景，并调用同一份安装脚本。无人值守安装见[手动安装指南](/docs/manual-install)，部署步骤见 [Vercel 部署指南](/docs/vercel)。
 
 ### 环境要隔离
 
@@ -67,15 +67,15 @@ AI 安装也会先询问相同的场景，并调用同一份安装脚本。无�
 
 先从 Test 环境开始。可用 Vercel Preview 测试，但必须连接测试数据库和 Test 凭据。模板内置订阅商品期望为 Pro **每月 9.90 美元**和**每年 99 美元**，USD、循环计费、含税且带 **7 天试用期**。`hybrid` 和 `onetime` 还需要一个 **299 美元的一次性**商品。如果修改了 `lib/billing/plans.ts`，Creem 后台商品也必须匹配。
 
-| 变量                        | 何时需要                                 | 获取方式与设置步骤                                                                                                                                                                                                                                                         |
-| --------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `CREEM_ENVIRONMENT`         | 完整应用需要；初次配置用 `test`          | 只能选 `test` 或 `live`。该值决定 Creem API 环境，并会与 API key 和商品环境核对。Test 和 Live 完全隔离，不能交叉使用各自的 key。                                                                                                                                           |
-| `BILLING_ENABLED`           | 每个部署环境都应明确设置                 | 创建商品、配置 Webhook、检查凭据时保持 `false`。只有 `pnpm billing:catalog` 在目标环境通过，且测试过结账和 Webhook 后，才改为 `true`。演示模式必须保持 `false`。                                                                                                           |
-| `CREEM_API_KEY`             | 收款开启时需要                           | 在 [Creem 后台](https://www.creem.io)切换到正确的 Test 或 Production 模式，打开 **Developers → API Keys**，复制该环境的 API key。Test 和 Live key 不同。在 Vercel 中将其作为敏感变量保存。                                                                                 |
-| `CREEM_WEBHOOK_SECRET`      | 收款开启时需要                           | 在 Creem 打开 **Developers → Webhooks**，创建端点 `https://你的域名/api/webhooks/creem`，复制该端点的签名 secret。事件选择[计费文档](./billing.md)列出的订阅事件，以及 `checkout.completed`、`refund.created`、`dispute.created`。Test 和 Production 端点有各自的 secret。 |
-| `CREEM_PRODUCT_PRO_MONTHLY` | `subscriptions` 或 `hybrid` 计费模式需要 | 在与 API key 相同的 Creem 环境创建月付订阅商品。金额、美元币种、税费模式和 7 天试用必须与代码商品目录相符。从商品详情页复制商品 ID（通常以 `prod_` 开头）。                                                                                                                |
-| `CREEM_PRODUCT_PRO_YEARLY`  | `subscriptions` 或 `hybrid` 计费模式需要 | 在相同环境创建年付订阅商品，确保金额、美元币种、税费模式和 7 天试用与代码一致，再复制商品 ID。                                                                                                                                                                             |
-| `CREEM_PRODUCT_LIFETIME`    | `hybrid` 或 `onetime` 计费模式需要       | 在相同环境创建一次性商品。金额、币种和税费配置应匹配 `lib/billing/plans.ts`，然后复制商品 ID。仅订阅模式不需要填写。                                                                                                                                                       |
+| 变量                        | 何时需要                                 | 获取方式与设置步骤                                                                                                                                                                                                                                                                                                                                |
+| --------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CREEM_ENVIRONMENT`         | 完整应用需要；初次配置用 `test`          | 只能选 `test` 或 `live`。该值决定 Creem API 环境，并会与 API key 和商品环境核对。Test 和 Live 完全隔离，不能交叉使用各自的 key。                                                                                                                                                                                                                  |
+| `BILLING_ENABLED`           | 每个部署环境都应明确设置                 | 创建商品、配置 Webhook、检查凭据时保持 `false`。只有 `pnpm billing:catalog` 在目标环境通过，且测试过结账和 Webhook 后，才改为 `true`。演示模式必须保持 `false`。                                                                                                                                                                                  |
+| `CREEM_API_KEY`             | 收款开启时需要                           | 在 [Creem 后台](https://www.creem.io)切换到正确的 Test 或 Production 模式，打开 **Developers → API Keys**，复制该环境的 API key。Test 和 Live key 不同。在 Vercel 中将其作为敏感变量保存。                                                                                                                                                        |
+| `CREEM_WEBHOOK_SECRET`      | 收款开启时需要                           | 在 Creem 打开 **Developers → Webhooks**，创建端点 `https://你的域名/api/webhooks/creem`，复制该端点的签名 secret。事件选择[计费运维文档](https://github.com/bugkiwi/creemseed/blob/main/docs/billing.md#webhook-coverage)列出的订阅事件，以及 `checkout.completed`、`refund.created`、`dispute.created`。Test 和 Production 端点有各自的 secret。 |
+| `CREEM_PRODUCT_PRO_MONTHLY` | `subscriptions` 或 `hybrid` 计费模式需要 | 在与 API key 相同的 Creem 环境创建月付订阅商品。金额、美元币种、税费模式和 7 天试用必须与代码商品目录相符。从商品详情页复制商品 ID（通常以 `prod_` 开头）。                                                                                                                                                                                       |
+| `CREEM_PRODUCT_PRO_YEARLY`  | `subscriptions` 或 `hybrid` 计费模式需要 | 在相同环境创建年付订阅商品，确保金额、美元币种、税费模式和 7 天试用与代码一致，再复制商品 ID。                                                                                                                                                                                                                                                    |
+| `CREEM_PRODUCT_LIFETIME`    | `hybrid` 或 `onetime` 计费模式需要       | 在相同环境创建一次性商品。金额、币种和税费配置应匹配 `lib/billing/plans.ts`，然后复制商品 ID。仅订阅模式不需要填写。                                                                                                                                                                                                                              |
 
 商品和变量都配置好后，用目标环境的凭据在本地运行只读商品检查：
 
@@ -83,7 +83,7 @@ AI 安装也会先询问相同的场景，并调用同一份安装脚本。无�
 pnpm billing:catalog
 ```
 
-它会核对商品 ID、环境、币种、周期、金额、税费、试用期和按量价格。通过后，才在对应 Vercel 环境启用支付并重新部署，然后用 Creem Test Mode 测试结账。浏览器返回成功页不等于完成付款；需要验证签名 Webhook。切换 Live 前阅读[上线检查清单](./release-checklist.md)。
+它会核对商品 ID、环境、币种、周期、金额、税费、试用期和按量价格。通过后，才在对应 Vercel 环境启用支付并重新部署，然后用 Creem Test Mode 测试结账。浏览器返回成功页不等于完成付款；需要验证签名 Webhook。切换 Live 前阅读[发布检查清单](https://github.com/bugkiwi/creemseed/blob/main/docs/release-checklist.md)。
 
 Creem 后台入口和 API key 位置见官方[后台指南](https://docs.creem.io/getting-started/dashboard-overview)、[Test Mode 指南](https://docs.creem.io/getting-started/test-mode)与 [Webhook 指南](https://docs.creem.io/code/webhooks)。
 

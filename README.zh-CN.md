@@ -6,7 +6,7 @@
 
 [在线演示](https://creemseed.vercel.app) · [使用此模板](https://github.com/bugkiwi/creemseed/generate) · [GitHub](https://github.com/bugkiwi/creemseed)
 
-[环境配置指南（在线）](https://creemseed.vercel.app/docs?lang=zh-CN) · [环境指南 Markdown](./docs/environment.zh-CN.md)
+[文档中心](https://creemseed.vercel.app/docs?lang=zh-CN) · [环境指南 Markdown](./docs/site/zh-CN/environment.md)
 
 [![部署到 Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbugkiwi%2Fcreemseed&project-name=creemseed&repository-name=creemseed&env=DEMO_MODE%2CBILLING_ENABLED&envDefaults=%7B%22DEMO_MODE%22%3A%22true%22%2C%22BILLING_ENABLED%22%3A%22false%22%7D&envDescription=Public+demo+only.+Accounts%2C+billing%2C+and+webhooks+are+disabled.+Follow+the+deployment+guide+to+enable+your+own+application.&envLink=https%3A%2F%2Fgithub.com%2Fbugkiwi%2Fcreemseed%2Fblob%2Fmain%2Fdocs%2Fdeployment.md)
 

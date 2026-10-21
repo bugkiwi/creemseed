@@ -3,7 +3,8 @@ import type { NextConfig } from 'next';
 const config: NextConfig = {
   output: 'standalone',
   outputFileTracingIncludes: {
-    '/docs': ['./docs/environment.en.md', './docs/environment.zh-CN.md'],
+    '/docs': ['./docs/site/**/*.md', './prompts/setup*.md'],
+    '/docs/*': ['./docs/site/**/*.md', './prompts/setup*.md'],
   },
   poweredByHeader: false,
   logging: { incomingRequests: { ignore: [/\/api\/auth\//] }, serverFunctions: false },

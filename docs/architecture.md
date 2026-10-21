@@ -21,6 +21,8 @@ Signed webhook   → event journal → user lock → canonical API state → acc
 - `lib/billing/`: server catalog, validated REST gateway, subscription policy, durable event processing and access guard.
 - `lib/db/`: Drizzle schema, connection and committed migrations.
 - `scripts/`: setup, public-repository guard, migrations, explicit admin role assignment, environment/catalog checks.
+- `docs/site/{en,zh-CN}/`: bilingual Markdown rendered by the public documentation site; `prompts/setup*.md` is the canonical AI installation prompt rendered directly on its own docs page.
+- `docs/`: engineering, billing, deployment and release references for contributors and operators.
 - `bin/create.mjs`: allowlisted local template creation; no repository history or local settings copied.
 - `starter.config.json`: application identity and feature choices; safe to commit.
 
