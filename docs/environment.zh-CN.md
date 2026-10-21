@@ -51,18 +51,17 @@ AI 安装也会先询问相同的场景，并调用同一份安装脚本。无�
 
 ## 应用基础设置
 
-| 变量                     | 何时需要                                | 获取方式与设置步骤                                                                                                                                                                                                                                                                   |
-| ------------------------ | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `NEXT_PUBLIC_APP_URL`    | 所有完整应用需要；无凭据演示站可省略    | 设置为你拥有的规范 origin，例如 `https://app.example.com`。还没有自定义域名时可用 Vercel 生产域名。不要添加路径、查询参数、用户名密码或尾部路由。本地开发用 `http://localhost:3000`。该值是公开信息，用来生成认证回调和规范链接。各部署环境的回调域名不同时，应分别配置对应 origin。 |
-| `DEMO_MODE`              | 每个部署环境都应明确设置                | 只有完全不提供账户和收款的公开预览才选 `true`。自己的完整应用选 `false`。Vercel Deploy 按钮默认 `true`；CLI 安装向导创建完整应用。构建和运行环境都应设置此值，然后重新部署。演示模式下认证、支付、后台写操作和 Webhook API 都不可用。                                                |
-| `DATABASE_URL`           | 完整应用需要                            | 在 Neon 等数据库服务商创建 PostgreSQL 数据库，从服务商的 **Connect** 页面复制连接 URI。Vercel Serverless 运行时优先使用服务商提供的 pooled/pooler 连接串。保留用户名、密码、主机、端口和数据库名；凭据中如有保留字符，应进行 URL 编码。示例中的连接串是占位内容。                    |
-| `MIGRATION_DATABASE_URL` | 可选；当运行时 URL 使用连接池时建议填写 | 从同一个数据库服务商复制 direct/unpooled 连接串，专供迁移脚本使用会话级 advisory lock。留空时自动回退到 `DATABASE_URL`。它必须指向应用使用的同一个数据库。本地 Docker Postgres 可留空。                                                                                              |
-| `BETTER_AUTH_SECRET`     | 完整应用需要                            | 在本地生成一个新的随机值，例如运行 `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"`。将结果直接保存到 Vercel 或本地密钥管理器。不要复用示例值、其他项目的值，也不要让无关项目共用同一个值。长度至少 32 个字符。                                      |
-| `TRUSTED_PROXY`          | 本地可选；部署时按实际代理设置          | 确实通过 Vercel 接收请求时设置为 `vercel`。仅当代理会覆盖该请求头且应用不允许绕过代理直连时，才设置 `x-real-ip`。其他情况设为 `none`。此设置决定限流信任哪个客户端 IP 请求头，不能替代边缘限流规则。                                                                                 |
+| 变量                  | 何时需要                             | 获取方式与设置步骤                                                                                                                                                                                                                                                                   |
+| --------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_APP_URL` | 所有完整应用需要；无凭据演示站可省略 | 设置为你拥有的规范 origin，例如 `https://app.example.com`。还没有自定义域名时可用 Vercel 生产域名。不要添加路径、查询参数、用户名密码或尾部路由。本地开发用 `http://localhost:3000`。该值是公开信息，用来生成认证回调和规范链接。各部署环境的回调域名不同时，应分别配置对应 origin。 |
+| `DEMO_MODE`           | 每个部署环境都应明确设置             | 只有完全不提供账户和收款的公开预览才选 `true`。自己的完整应用选 `false`。Vercel Deploy 按钮默认 `true`；CLI 安装向导创建完整应用。构建和运行环境都应设置此值，然后重新部署。演示模式下认证、支付、后台写操作和 Webhook API 都不可用。                                                |
+| `DATABASE_URL`        | 完整应用需要                         | 在 Neon 等数据库服务商创建 PostgreSQL 数据库，从服务商的 **Connect** 页面复制连接 URI。Vercel Serverless 运行时优先使用服务商提供的 pooled/pooler 连接串。保留用户名、密码、主机、端口和数据库名；凭据中如有保留字符，应进行 URL 编码。示例中的连接串是占位内容。                    |
+| `BETTER_AUTH_SECRET`  | 完整应用需要                         | 在本地生成一个新的随机值，例如运行 `node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"`。将结果直接保存到 Vercel 或本地密钥管理器。不要复用示例值、其他项目的值，也不要让无关项目共用同一个值。长度至少 32 个字符。                                      |
+| `TRUSTED_PROXY`       | 本地可选；部署时按实际代理设置       | 确实通过 Vercel 接收请求时设置为 `vercel`。仅当代理会覆盖该请求头且应用不允许绕过代理直连时，才设置 `x-real-ip`。其他情况设为 `none`。此设置决定限流信任哪个客户端 IP 请求头，不能替代边缘限流规则。                                                                                 |
 
 ### 在 Vercel 上使用 Postgres
 
-在数据库服务商创建数据库，选择靠近 Vercel Functions 区域的位置；如果服务商同时提供 pooled 和 direct 两种连接串，分别填入上述两个变量。为本地/Preview 准备独立数据库或分支；不要让 Preview 访问生产数据。切换新 schema 前，在可信的发布步骤里执行仓库内的迁移。Neon 用户可参阅 [Neon 连接指南](https://neon.com/docs/connect/connect-from-any-app) 和[连接池指南](https://neon.com/docs/connect/connection-pooling)。
+在数据库服务商创建数据库，选择靠近 Vercel Functions 区域的位置，并将 pooled 连接串填入 `DATABASE_URL` 供 Vercel Serverless 运行时使用。为本地/Preview 准备独立数据库或分支；不要让 Preview 访问生产数据。切换新 schema 前，在可信的发布步骤里执行仓库内的迁移。Neon 用户可参阅 [Neon 连接指南](https://neon.com/docs/connect/connect-from-any-app) 和[连接池指南](https://neon.com/docs/connect/connection-pooling)。
 
 ## Creem 收款
 
@@ -169,6 +168,5 @@ pnpm typecheck
 | OAuth 报 `redirect_uri_mismatch` | 服务商登记的 callback 必须准确等于 `NEXT_PUBLIC_APP_URL` 加 `/api/auth/callback/google` 或 `/api/auth/callback/github`。检查协议、域名、端口和 OAuth 应用。 |
 | Creem 报商品或 key 环境错误      | 确认 API key、Webhook、商品 ID 和 `CREEM_ENVIRONMENT` 属于同一个 Test 或 Live 环境，然后运行 `pnpm billing:catalog`。                                       |
 | 结账不可用                       | 检查 `DEMO_MODE=false`、`BILLING_ENABLED=true`、当前计费模式需要的商品 ID，以及最新部署是否已加载这些值。                                                   |
-| 数据库迁移无法取得锁             | 设置 `MIGRATION_DATABASE_URL` 为同一数据库的 direct/unpooled URL，再在可信发布步骤重新运行迁移。                                                            |
 | Vercel 修改后仍像旧值            | 确认变量已绑定到当前部署对应的环境，然后创建新部署。已有部署仍使用它构建时的变量。                                                                          |
 | 密码重置/验证邮件没有到达        | 确认 `EMAIL_FROM` 使用已验证的 Resend 域名、API key 属于对应 Resend 项目、DNS 已验证，并检查服务商的发送日志。                                              |

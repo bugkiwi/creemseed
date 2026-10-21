@@ -18,7 +18,7 @@ node scripts/setup.mjs
 
 The wizard asks for name, description, application origin, database, sign-in methods, transactional email, billing model, independently selectable analytics and deployment target. It installs dependencies, prepares an ignored environment and can start/migrate local Docker Postgres. It never creates a provider account, silently switches to live payments, deploys a site or grants an administrator role.
 
-Configure provider secrets locally after the wizard. Existing Postgres uses `.env` `DATABASE_URL`; the initial placeholder is never migrated. For a pooled runtime URL, optionally set `MIGRATION_DATABASE_URL` to the direct URL for the same database before running migrations. Console email is useful for development localhost only. A deployed password login must use Resend; social-only sign-in can use provider verification without a mail transport. Missing OAuth credentials mean that selected provider cannot start until you configure it.
+Configure provider secrets locally after the wizard. Existing Postgres uses `.env` `DATABASE_URL`; the initial placeholder is never migrated. Console email is useful for development localhost only. A deployed password login must use Resend; social-only sign-in can use provider verification without a mail transport. Missing OAuth credentials mean that selected provider cannot start until you configure it.
 
 ## Explicit unattended configuration
 

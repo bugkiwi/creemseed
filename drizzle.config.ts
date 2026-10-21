@@ -5,10 +5,5 @@ export default defineConfig({
   schema: './lib/db/schema.ts',
   out: './lib/db/migrations',
   dialect: 'postgresql',
-  dbCredentials: {
-    url:
-      process.env.MIGRATION_DATABASE_URL ||
-      process.env.DATABASE_URL ||
-      'postgres://localhost/creemseed',
-  },
+  dbCredentials: { url: process.env.DATABASE_URL || 'postgres://localhost/creemseed' },
 });
