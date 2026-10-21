@@ -2,7 +2,7 @@
 
 ## Catalog
 
-`lib/billing/plans.ts` is authoritative. Clients submit only a plan key. Before checkout, the gateway reads the remote product and checks environment, exact ID, price, currency, billing type, cadence, inclusive tax and absence of unsupported trial/usage pricing. Configuration is USD by default and can be edited server-side. Discounts can be configured in Creem's hosted checkout; entitlement does not assume the full list price was collected.
+`lib/billing/plans.ts` is authoritative. Clients submit only a plan key. Before checkout, the gateway reads the remote product and checks environment, exact ID, price, currency, billing type, cadence, inclusive tax, exact trial length and absence of usage pricing. The default recurring catalog is $9.90/month or $99/year with a seven-day trial. Configuration is USD by default and can be edited server-side. Discounts can be configured in Creem's hosted checkout; entitlement does not assume the full list price was collected.
 
 Default modes:
 
@@ -12,7 +12,7 @@ Default modes:
 | `hybrid`        | Pro monthly, Pro yearly, Lifetime |
 | `onetime`       | Lifetime                          |
 
-Free trials, custom recurrence, seats and usage charges are deliberately rejected. Supporting them requires matching access and eligibility rules. Preserve historical product mapping when changing products or prices. Do not silently reassign an old product ID to a different plan.
+The seven-day trial is supported for configured recurring products. Custom recurrence, seats and usage charges remain rejected. A merchant who promises one trial per customer must enforce that eligibility separately; this starter does not assume Creem prevents repeated trials. Preserve historical product mapping when changing products or prices. Do not silently reassign an old product ID to a different plan.
 
 ## Checkout and recovery
 
@@ -22,7 +22,7 @@ Free trials, custom recurrence, seats and usage charges are deliberately rejecte
 4. Commit a `creating` intent with random ID, owner, product, environment and plan.
 5. Make one Creem checkout POST with that intent and owner in server-supplied metadata. `request_id` is a correlation reference; the application does not depend on undocumented retry guarantees.
 6. Persist a safe hosted URL and checkout ID. An existing matching open checkout is reused. A timeout, crash or ambiguous response blocks another create request until reconciliation.
-7. A verified completion reconciles the remote checkout, intent, owner, mode, units, product, customer, order and transaction. Only then map the customer and synchronize access.
+7. A verified completion reconciles the remote checkout, intent, owner, mode, units, product and customer. Paid checkouts also require matching order and transaction. Trial checkouts require a matching canonical trialing subscription with a valid period. Only then map the customer and synchronize access.
 
 A lost POST response may have no local remote ID. The operator finds the checkout in the merchant dashboard using the local attempt reference, then supplies `ch_…` under **Admin → Checkouts**. The recovery action verifies all bindings. Open remote checkouts stay open; canonical canceled/expired checkouts close the local attempt. It never guesses that a charge failed or creates another charge. If the provider never received the request and no checkout exists, support must investigate before a reviewed manual recovery; the starter has no unsafe force-reset button.
 
@@ -32,16 +32,16 @@ The browser success page is informational. It cannot activate a subscription or 
 
 The local snapshot is always read from the API under the user's lock. A stale webhook is therefore a request to fetch current state, rather than a historical instruction to restore access. A payment transaction must match the customer, subscription, currency, mode and invoice type. The policy additionally requires a future `current_period_end_date`.
 
-| Status                         | Paid access                                                     |
-| ------------------------------ | --------------------------------------------------------------- |
-| `active`                       | Yes, with verified payment and future period end                |
-| `scheduled_cancel`             | Yes until period end, with verified payment                     |
-| `trialing`                     | No default free trial entitlement; the catalog disallows trials |
-| `past_due`, `unpaid`, `paused` | No; customer can open portal to resolve billing                 |
-| `canceled`, `expired`, unknown | No                                                              |
-| Any status on payment hold     | No                                                              |
+| Status                         | Paid access                                                           |
+| ------------------------------ | --------------------------------------------------------------------- |
+| `active`                       | Yes, with verified payment and future period end                      |
+| `scheduled_cancel`             | Yes until period end, with verified payment                           |
+| `trialing`                     | Yes, only after verified checkout and until the stored trial deadline |
+| `past_due`, `unpaid`, `paused` | No; customer can open portal to resolve billing                       |
+| `canceled`, `expired`, unknown | No                                                                    |
+| Any status on payment hold     | No                                                                    |
 
-A period expiring revokes access even when no expiry event arrives. The helper `requirePaidUser()` enforces this server-side for each paid operation. New recurring checkout is blocked while an existing subscription is active, scheduled, paused or unresolved, including past-due state. Recover the existing subscription first. Use the merchant dashboard for product changes; only configured products can receive automatic access.
+A period expiring revokes access even when no expiry event arrives. A trial deadline is stored only after a completed account-bound checkout and canonical Creem trialing state; it cannot extend into a later paid period without a verified payment. The helper `requirePaidUser()` enforces this server-side for each paid operation. New recurring checkout is blocked while an existing subscription is active, trialing, scheduled, paused or unresolved, including past-due state. Recover the existing subscription first. Use the merchant dashboard for product changes; only configured products can receive automatic access.
 
 Customers and admins can explicitly request `mode: scheduled`, `onExecute: cancel`; no implicit provider default is trusted. Reconciliation confirms the actual resulting status. The paid-through date is displayed in UTC. Renewal state is obtained from `subscription.paid` and the other lifecycle events; the API's current last payment is verified rather than using event type alone.
 

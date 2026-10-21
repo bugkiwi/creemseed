@@ -22,6 +22,13 @@ export function Pricing() {
             </span>
           </p>
           <p className="muted small">USD · Tax included</p>
+          {plan.trialDays ? (
+            <p className="muted small">
+              {plan.trialDays} days free, then {money(plan.amount)}
+              {plan.interval === 'every-year' ? '/year' : '/month'}. Cancel before the trial ends to
+              avoid the first charge.
+            </p>
+          ) : null}
           <ul>
             {plan.features.map((f) => (
               <li key={f}>
@@ -35,7 +42,10 @@ export function Pricing() {
             </Button>
           ) : (
             <BillingAction action="billing/checkout" body={{ plan: plan.key }}>
-              Choose {plan.label.toLowerCase()} <span aria-hidden="true">↗</span>
+              {plan.trialDays
+                ? `Start ${plan.trialDays}-day trial`
+                : `Choose ${plan.label.toLowerCase()}`}{' '}
+              <span aria-hidden="true">↗</span>
             </BillingAction>
           )}
         </article>

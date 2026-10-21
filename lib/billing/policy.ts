@@ -3,16 +3,18 @@ export type Entitlement = {
   periodEnd: Date | null;
   held: boolean;
   paymentVerified: boolean;
+  trialEndsAt?: Date | null;
 };
 export function hasSubscriptionAccess(subscription: Entitlement, now = new Date()) {
-  if (
-    subscription.held ||
-    !subscription.paymentVerified ||
-    !subscription.periodEnd ||
-    subscription.periodEnd <= now
-  )
-    return false;
-  return ['active', 'trialing', 'scheduled_cancel'].includes(subscription.status);
+  if (subscription.held || !subscription.periodEnd || subscription.periodEnd <= now) return false;
+  if (subscription.status === 'active') return subscription.paymentVerified;
+  if (subscription.status === 'trialing')
+    return !!(subscription.trialEndsAt && subscription.trialEndsAt > now);
+  if (subscription.status === 'scheduled_cancel')
+    return (
+      subscription.paymentVerified || !!(subscription.trialEndsAt && subscription.trialEndsAt > now)
+    );
+  return false;
 }
 export function isBlockingSubscription(status: string) {
   return !['canceled', 'expired'].includes(status);

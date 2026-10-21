@@ -1,10 +1,10 @@
 # Deployment
 
-## Public demo on Vercel
+## Online test app and credential-free copies
 
-Upstream source: [bugkiwi/creemseed](https://github.com/bugkiwi/creemseed). The [public demo](https://creemseed.vercel.app) is a showcase, not an operating paid application.
+Upstream source: [bugkiwi/creemseed](https://github.com/bugkiwi/creemseed). The [online test app](https://creemseed.vercel.app) uses a dedicated Neon database, Better Auth, Resend and Creem Test Mode. It has no live charging configuration. Google OAuth remains limited to approved test users while the OAuth app is in testing.
 
-Use the Deploy button in either README to create your own Vercel/GitHub copy. It asks for two public flags and pre-fills `DEMO_MODE=true`, `BILLING_ENABLED=false`. No database, authentication secret, mail credential or Creem key is needed. The deployment uses Vercel's trusted production-domain metadata for canonical demo URLs if NEXT_PUBLIC_APP_URL is absent; you can set an explicit HTTPS origin instead.
+Use the Deploy button in either README to create your own Vercel/GitHub copy. It asks for two public flags and pre-fills `DEMO_MODE=true`, `BILLING_ENABLED=false`. Your copy starts as a credential-free demo. No database, authentication secret, mail credential or Creem key is needed. The deployment uses Vercel's trusted production-domain metadata for canonical demo URLs if NEXT_PUBLIC_APP_URL is absent; you can set an explicit HTTPS origin instead.
 
 In demo mode:
 
@@ -12,7 +12,7 @@ In demo mode:
 - Sign-in/sign-up explain that accounts and payments are unavailable; no credential forms are shown.
 - `/dashboard` and `/admin` redirect to sign-in. No demo administrator or customer database exists.
 - All authentication, billing, admin mutation and Creem webhook APIs return HTTP 503 before session lookup, request-body processing or provider work. Setting BILLING_ENABLED alone cannot override the demo guard.
-- Analytics remain independently optional and disabled in the upstream showcase.
+- Analytics remain independently optional and disabled by default.
 
 Set DEMO_MODE at both build and runtime. Environment changes require a new deployment. The checked-in `.vercelignore` excludes local `.env*` (except the empty example), `.local`, dependencies, build output and private-key formats. Never upload `.vercel/project.json` or export provider keys into public docs.
 
@@ -20,7 +20,7 @@ Set DEMO_MODE at both build and runtime. Environment changes require a new deplo
 
 Configure your own Postgres database, fresh BETTER_AUTH_SECRET, exact HTTPS NEXT_PUBLIC_APP_URL and selected email/OAuth providers. Choose Resend for deployed password login. Apply migrations through a trusted release step, set `DEMO_MODE=false`, rebuild and exercise the authenticated flow. Keep Creem in test mode with billing disabled until the catalog and webhook configuration are ready.
 
-Enabling billing is a separate action. Complete docs/release-checklist.md with your own test-mode account before using live products. Never connect the public upstream demo to a real customer database just to show dashboard screenshots.
+Enabling billing is a separate action. Complete docs/release-checklist.md with your own test-mode account before using live products. Keep test and live databases, keys and webhook endpoints separate.
 
 ## Complete application preparation
 

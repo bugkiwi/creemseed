@@ -23,8 +23,8 @@ export default async function Billing({
       <p className="lede">Subscriptions, payments and the details in between.</p>
       {params.checkout ? (
         <p className="notice" role="status">
-          You have returned from checkout. Access updates after payment is verified. Use “Refresh
-          billing” if your plan has not appeared yet.
+          You have returned from checkout. Access updates after Creem confirms your trial or
+          payment. Use “Refresh billing” if your plan has not appeared yet.
         </p>
       ) : null}
       <div className="button-row page-actions">
@@ -55,14 +55,16 @@ export default async function Billing({
             <h2>{sub.status.replaceAll('_', ' ')}</h2>
             <p className="muted">
               {sub.periodEnd
-                ? `${sub.cancelAtPeriodEnd ? 'Ends' : 'Current period ends'} ${sub.periodEnd.toLocaleDateString('en-US', { timeZone: 'UTC' })}`
+                ? `${sub.status === 'trialing' ? 'Trial ends' : sub.cancelAtPeriodEnd ? 'Ends' : 'Current period ends'} ${sub.periodEnd.toLocaleDateString('en-US', { timeZone: 'UTC' })}`
                 : 'Waiting for a verified billing period'}
             </p>
             <span className={`badge ${hasSubscriptionAccess(sub) ? 'badge-success' : ''}`}>
               {sub.held
                 ? 'Payment review required'
                 : hasSubscriptionAccess(sub)
-                  ? 'Access active'
+                  ? sub.status === 'trialing'
+                    ? 'Trial access active'
+                    : 'Access active'
                   : 'Access inactive'}
             </span>
           </div>

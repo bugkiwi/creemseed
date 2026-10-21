@@ -93,7 +93,7 @@ test('webhook HMAC covers the exact raw bytes; invalid and changed bodies fail',
   assert.throws(() => verifyEvent(raw + ' ', signature, secret));
   assert.throws(() => verifyEvent(raw, signature, ''));
 });
-test('catalog validation rejects wrong environments, cadence, prices and unsupported trial charges', () => {
+test('catalog validation rejects wrong environments, cadence, prices and trial settings', () => {
   process.env.CREEM_ENVIRONMENT = 'test';
   process.env.CREEM_API_KEY = 'creem_test_' + 'fixture';
   process.env.CREEM_PRODUCT_PRO_MONTHLY = 'prod_TestMonth';
@@ -101,11 +101,12 @@ test('catalog validation rejects wrong environments, cadence, prices and unsuppo
     id: 'prod_TestMonth',
     mode: 'test',
     status: 'active',
-    price: 1900,
+    price: 990,
     currency: 'USD',
     billing_type: 'recurring',
     billing_period: 'every-month',
     tax_mode: 'inclusive',
+    trial_period_days: 7,
   };
   assert.doesNotThrow(() => assertProduct(product, plans[0]));
   for (const values of [
@@ -115,7 +116,7 @@ test('catalog validation rejects wrong environments, cadence, prices and unsuppo
     { billing_type: 'onetime' },
     { billing_period: 'every-year' },
     { tax_mode: 'exclusive' },
-    { trial_period_days: 7 },
+    { trial_period_days: 14 },
     { pay_what_you_want: true },
     { usage_prices: [{}] },
   ])

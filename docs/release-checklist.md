@@ -17,7 +17,9 @@ These steps require your accounts and credentials. Check them against a dedicate
 ## Real Creem test-mode lifecycle
 
 - [ ] Catalog check matches monthly/yearly products, currency, price and tax mode.
-- [ ] New checkout → payment → signed webhook → correct customer → paid access.
+- [ ] New trial checkout → signed webhook → correct customer → trial access until the verified deadline.
+- [ ] First charge after trial → verified invoice → paid access; failed charge revokes access.
+- [ ] New paid checkout without trial → payment → signed webhook → correct customer → paid access.
 - [ ] Return URL without payment cannot grant access.
 - [ ] Renewal advances the paid-through date and verifies the new invoice.
 - [ ] Period-end cancellation retains access through the paid period, then revokes it.

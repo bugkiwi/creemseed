@@ -213,6 +213,7 @@ export async function syncSubscription(
   id: string,
   userId: string,
   provider: Gateway = gateway,
+  completedCheckoutProductId?: string,
 ) {
   // Callers hold the user's row lock before reading canonical state. This avoids
   // an older concurrent retrieval overwriting a newer subscription snapshot.
@@ -220,6 +221,8 @@ export async function syncSubscription(
   assertMode(remote.mode);
   const customerId = remoteId(remote.customer),
     productId = remoteId(remote.product);
+  if (completedCheckoutProductId && productId !== completedCheckoutProductId)
+    throw new Error('Subscription product mismatch');
   const [customer] = await tx
     .select()
     .from(billingCustomers)
@@ -261,8 +264,22 @@ export async function syncSubscription(
       !!transaction.refunded_amount;
     paymentVerified = transaction.status === 'paid' && !transaction.refunded_amount;
   }
-  // Trials are deliberately absent from the starter catalog. Enabling trials
-  // requires a separate eligibility policy; trialing alone never grants access.
+  const periodStart = parsedDate(remote.current_period_start_date);
+  const periodEnd = parsedDate(remote.current_period_end_date);
+  let trialEndsAt = existing?.trialEndsAt ?? null;
+  if (completedCheckoutProductId && remote.status === 'trialing') {
+    if (!plan?.trialDays || !periodStart || !periodEnd)
+      throw new Error('Trial period missing or not configured');
+    const now = Date.now();
+    const tolerance = 60 * 60 * 1000;
+    if (
+      periodStart.getTime() > now + tolerance ||
+      periodEnd.getTime() <= now ||
+      periodEnd.getTime() > periodStart.getTime() + plan.trialDays * 86_400_000 + tolerance
+    )
+      throw new Error('Trial period mismatch');
+    trialEndsAt ??= periodEnd;
+  }
   const values = {
     userId,
     customerId,
@@ -270,10 +287,11 @@ export async function syncSubscription(
     planKey: plan?.key || 'unmapped',
     environment: environment(),
     status: remote.status,
-    periodStart: parsedDate(remote.current_period_start_date),
-    periodEnd: parsedDate(remote.current_period_end_date),
+    periodStart,
+    periodEnd,
     cancelAtPeriodEnd: remote.status === 'scheduled_cancel',
     paymentVerified,
+    trialEndsAt,
     held,
     syncedAt: new Date(),
   };
@@ -330,35 +348,38 @@ export async function syncCheckout(
       .where(eq(checkoutAttempts.id, attempt.id));
     return;
   }
-  if (
-    !remote.customer ||
-    !remote.order ||
-    remote.order.status !== 'paid' ||
-    remote.order.product !== attempt.productId ||
-    !remote.order.transaction
-  )
-    throw new Error('Payment not confirmed');
+  if (!remote.customer) throw new Error('Checkout customer missing');
   const customerId = remoteId(remote.customer);
-  const transaction = await provider.transaction(remote.order.transaction);
-  assertMode(transaction.mode);
   const plan = planByProduct(attempt.productId);
+  if (!plan) throw new Error('Checkout product unmapped');
   if (
-    !plan ||
-    transaction.customer !== customerId ||
-    transaction.order !== remote.order.id ||
-    transaction.currency !== plan.currency ||
-    remote.order.currency !== plan.currency
+    remote.order &&
+    (remote.order.product !== attempt.productId ||
+      remote.order.currency !== plan.currency ||
+      (remote.order.customer && remote.order.customer !== customerId))
   )
-    throw new Error('Payment binding mismatch');
+    throw new Error('Checkout order mismatch');
+  if (plan.interval === 'once' && (!remote.order || !remote.order.transaction))
+    throw new Error('Payment not confirmed');
   await bindCustomer(tx, attempt.userId, customerId);
   if (plan.interval === 'once') {
+    const order = remote.order!;
+    if (order.status !== 'paid') throw new Error('Payment not confirmed');
+    const transaction = await provider.transaction(order.transaction!);
+    assertMode(transaction.mode);
+    if (
+      transaction.customer !== customerId ||
+      transaction.order !== order.id ||
+      transaction.currency !== plan.currency
+    )
+      throw new Error('Payment binding mismatch');
     if (
       remote.subscription ||
       transaction.subscription ||
       transaction.type !== 'payment' ||
-      remote.order.type !== 'onetime' ||
+      order.type !== 'onetime' ||
       transaction.amount_paid == null ||
-      transaction.amount_paid !== remote.order.amount_paid
+      transaction.amount_paid !== order.amount_paid
     )
       throw new Error('One-time payment mismatch');
     const [paymentHold] = await tx
@@ -375,13 +396,13 @@ export async function syncCheckout(
       transaction.status === 'paid' && !transaction.refunded_amount && !paymentHold
         ? 'paid'
         : 'revoked';
-    const [existing] = await tx.select().from(purchases).where(eq(purchases.id, remote.order.id));
+    const [existing] = await tx.select().from(purchases).where(eq(purchases.id, order.id));
     if (existing && existing.userId !== attempt.userId)
       throw new Error('Purchase ownership mismatch');
     await tx
       .insert(purchases)
       .values({
-        id: remote.order.id,
+        id: order.id,
         userId: attempt.userId,
         customerId,
         productId: attempt.productId,
@@ -397,13 +418,31 @@ export async function syncCheckout(
         set: { status: existing?.status === 'revoked' ? 'revoked' : status },
       });
   } else {
-    if (
-      !remote.subscription ||
-      remote.order.type !== 'recurring' ||
-      transaction.subscription !== remoteId(remote.subscription)
-    )
+    if (!remote.subscription || (remote.order && remote.order.type !== 'recurring'))
       throw new Error('Subscription checkout mismatch');
-    await syncSubscription(tx, remoteId(remote.subscription), attempt.userId, provider);
+    const subscriptionId = remoteId(remote.subscription);
+    const synced = await syncSubscription(
+      tx,
+      subscriptionId,
+      attempt.userId,
+      provider,
+      attempt.productId,
+    );
+    if (synced.status === 'trialing') {
+      if (!synced.trialEndsAt || !plan.trialDays) throw new Error('Trial could not be verified');
+    } else {
+      if (!remote.order || remote.order.status !== 'paid' || !remote.order.transaction)
+        throw new Error('Payment not confirmed');
+      const transaction = await provider.transaction(remote.order.transaction);
+      assertMode(transaction.mode);
+      if (
+        transaction.customer !== customerId ||
+        transaction.order !== remote.order.id ||
+        transaction.subscription !== subscriptionId ||
+        transaction.currency !== plan.currency
+      )
+        throw new Error('Subscription payment mismatch');
+    }
   }
   await tx
     .update(checkoutAttempts)

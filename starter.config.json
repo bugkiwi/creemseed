@@ -3,8 +3,8 @@
   "name": "Creemseed",
   "description": "A small foundation for your next paid product.",
   "database": "docker",
-  "auth": ["email"],
-  "email": "console",
+  "auth": ["email", "google"],
+  "email": "resend",
   "billing": "subscriptions",
   "analytics": {
     "posthog": false,

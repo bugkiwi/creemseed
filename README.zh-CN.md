@@ -21,13 +21,13 @@
 - **两种安装方式**：CLI 交互安装与 AI prompt 安装，共用同一份配置校验，均要求用户选择实际场景。
 - Vercel 部署与独立 Node/Docker 输出，附 CI、依赖更新和公开仓库安全约定。
 
-计费单位为个人账户。当前精简版不包含团队、席位、按量计费、试用期或任务平台。内置价格是模板的示例配置，不代表本仓库正在销售某项服务。本项目是独立社区模板，并非 Creem 官方产品。
+计费单位为个人账户。当前精简版不包含团队、席位、按量计费或任务平台。内置价格与 7 天试用是模板的示例配置，不代表本仓库正在销售某项服务。本项目是独立社区模板，并非 Creem 官方产品。
 
-## 在线演示与 Vercel
+## 在线测试站与 Vercel
 
-[公开演示站](https://creemseed.vercel.app) 使用 `DEMO_MODE=true`，展示模板的公开页面，不收集注册账户或接受付款，也不需要数据库和 Provider 密钥。演示模式下，认证、计费、后台写操作和 Webhook API 返回 HTTP 503，私有页面跳转至登录说明页。
+[在线测试站](https://creemseed.vercel.app)已接入 Better Auth 与 Creem **测试环境**，可注册、登录并进入托管订阅结账，不产生真实扣款。Google OAuth 应用仍处于测试状态，只有已加入测试用户的账号可用 Google 登录；邮箱登录使用已配置的发件域名。
 
-部署按钮会创建**你自己的副本**，只预填 `DEMO_MODE=true`、`BILLING_ENABLED=false` 两个公开开关；演示地址可从 Vercel 的生产域名元数据自动推导。运行完整应用时，设置 `DEMO_MODE=false`，在本地选择场景并配置独立的 Postgres、认证、邮件和 Creem 凭据，再按[部署指南](./docs/deployment.md)操作。切换模式后重新构建。
+部署按钮会创建**你自己的副本**，默认使用无需凭据的演示模式，只预填 `DEMO_MODE=true`、`BILLING_ENABLED=false` 两个公开开关；演示地址可从 Vercel 的生产域名元数据自动推导。运行完整应用时，设置 `DEMO_MODE=false`，在本地选择场景并配置独立的 Postgres、认证、邮件和 Creem 凭据，再按[部署指南](./docs/deployment.md)操作。切换模式后重新构建。
 
 ## 通过 CLI 开始
 
@@ -94,13 +94,13 @@ node scripts/setup.mjs --config /absolute/path/to/choices.json --yes
 
 ## 接入 Creem
 
-1. 在自己的 **Test 环境**创建商品。默认服务端目录为 Pro 月付 **19 美元**、年付 **190 美元**，循环扣费、含税、无试用和按量收费。混合或一次性模式还包含 **299 美元**的一次性商品。调价时修改 [lib/billing/plans.ts](./lib/billing/plans.ts) 并创建匹配商品。
+1. 在自己的 **Test 环境**创建商品。默认服务端目录为 Pro 月付 **9.90 美元**、年付 **99 美元**，循环扣费、含税、**7 天试用**、无按量收费。混合或一次性模式还包含 **299 美元**的一次性商品。调价或取消试用时修改 [lib/billing/plans.ts](./lib/billing/plans.ts) 并创建匹配商品。
 2. 在本地或部署密钥设置中填写 `CREEM_API_KEY`、`CREEM_WEBHOOK_SECRET` 和选中的 `CREEM_PRODUCT_*`。保持 `CREEM_ENVIRONMENT=test`。
 3. 将 `/api/webhooks/creem` 注册为 Webhook，订阅 `checkout.completed`、文档列出的 `subscription.*` 生命周期、`refund.created`、`dispute.created`。本地转发使用 [Creem 官方 CLI](https://docs.creem.io/code/cli) 和自己的测试账号。
 4. 运行 `pnpm billing:catalog`；确认商品匹配后设置 `BILLING_ENABLED=true`，开始测试支付。
 5. 完成[上线检查](./docs/release-checklist.md)。正式收款使用独立 Live 商品、密钥、Webhook secret 和数据库。
 
-支付返回页不授予权益。签名通过的事件会读取 Creem API 的当前事实再同步；订阅权益要求已验证付款、允许的状态、未到期的服务周期以及没有付款冻结。周期末取消保留已付费时间，逾期、未付、暂停、到期、取消均关闭权益；退款与争议采取保守冻结，需经营者检查。
+支付返回页不授予权益。签名通过的事件会读取 Creem API 的当前事实再同步；试用权益要求完成与账户绑定的结账，并核对 Creem 的试用订阅，到已验证的试用截止时间即结束，除非后续付款得到验证。正式付费权益要求已验证付款、允许的状态、未到期的服务周期以及没有付款冻结。逾期、未付、暂停、到期、取消均关闭权益；退款与争议采取保守冻结，需经营者检查。
 
 身份认证使用 Better Auth，计费授权由服务端的小型 Creem 集成负责；不向浏览器开放通用客户或交易代理。客户 ID 从当前账户推导，订阅 ID 校验归属。并发、异常和限制见[计费设计](./docs/billing.md)。
 

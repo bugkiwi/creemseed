@@ -4,7 +4,7 @@
 
 An English-first, MIT-licensed Next.js starter for products paid through Creem, with Better Auth, Postgres, a customer workspace and an admin desk.
 
-[Live demo](https://creemseed.vercel.app) · [Use this template](https://github.com/bugkiwi/creemseed/generate) · [GitHub](https://github.com/bugkiwi/creemseed)
+[Online test app](https://creemseed.vercel.app) · [Use this template](https://github.com/bugkiwi/creemseed/generate) · [GitHub](https://github.com/bugkiwi/creemseed)
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbugkiwi%2Fcreemseed&project-name=creemseed&repository-name=creemseed&env=DEMO_MODE%2CBILLING_ENABLED&envDefaults=%7B%22DEMO_MODE%22%3A%22true%22%2C%22BILLING_ENABLED%22%3A%22false%22%7D&envDescription=Public+demo+only.+Accounts%2C+billing%2C+and+webhooks+are+disabled.+Follow+the+deployment+guide+to+enable+your+own+application.&envLink=https%3A%2F%2Fgithub.com%2Fbugkiwi%2Fcreemseed%2Fblob%2Fmain%2Fdocs%2Fdeployment.md)
 
@@ -21,13 +21,13 @@ An English-first, MIT-licensed Next.js starter for products paid through Creem, 
 - **Two setup paths**: an interactive CLI or an AI prompt. Both use the same validated configuration and ask you to choose your use case.
 - Standalone Node/Docker output, Vercel support, CI checks, dependency updates and public-repository hygiene.
 
-Personal accounts are the billing unit. Teams, seats, metered billing, trials and a job platform are outside this small starter. The built-in prices are example product configuration, not a service being offered by this repository. This is an independent community starter, not an official Creem product.
+Personal accounts are the billing unit. Teams, seats, metered billing and a job platform are outside this small starter. The built-in prices and seven-day trials are example product configuration, not a service being offered by this repository. This is an independent community starter, not an official Creem product.
 
-## Public demo and Vercel
+## Online test app and Vercel
 
-The [hosted demo](https://creemseed.vercel.app) runs with `DEMO_MODE=true`. It shows the public template pages, accepts no registrations or payments, and requires no database or provider credentials. All authentication, billing, admin mutation and webhook APIs return HTTP 503 in this mode; private pages redirect to the sign-in explanation.
+The [hosted test app](https://creemseed.vercel.app) runs with Better Auth and Creem **test mode**. You can create an account, sign in and try a hosted subscription checkout. No real payment is collected. The Google OAuth app is currently in testing, so Google sign-in is limited to its approved test users; email sign-in uses a configured sender domain.
 
-The Deploy button creates **your own copy** and pre-fills only two public settings: `DEMO_MODE=true` and `BILLING_ENABLED=false`. Demo origins can use Vercel’s production-domain metadata automatically. For a complete application, set `DEMO_MODE=false`, choose your scenario locally, configure independent Postgres/auth/email/Creem settings, and follow [the deployment guide](./docs/deployment.md). Rebuild after changing modes.
+The Deploy button creates **your own copy** in credential-free demo mode, with `DEMO_MODE=true` and `BILLING_ENABLED=false`. Demo origins can use Vercel’s production-domain metadata automatically. For a complete application, set `DEMO_MODE=false`, choose your scenario locally, configure independent Postgres/auth/email/Creem settings, and follow [the deployment guide](./docs/deployment.md). Rebuild after changing modes.
 
 ## Start with the CLI
 
@@ -94,13 +94,13 @@ See [docs/setup.md](./docs/setup.md) for the schema, unattended installation and
 
 ## Connect Creem
 
-1. Create your own **test-mode** Creem products. The default server catalog uses Pro monthly **$19 USD** and yearly **$190 USD**, recurring, tax inclusive, with no trial or usage charges. Hybrid/one-time mode also uses a **$299 USD** one-time product. Edit [lib/billing/plans.ts](./lib/billing/plans.ts) and create matching products if you want different prices.
+1. Create your own **test-mode** Creem products. The default server catalog uses Pro monthly **$9.90 USD** and yearly **$99 USD**, recurring, tax inclusive, with a **7-day trial** and no usage charges. Hybrid/one-time mode also uses a **$299 USD** one-time product. Edit [lib/billing/plans.ts](./lib/billing/plans.ts) and create matching products if you want different prices or no trial.
 2. Set `CREEM_API_KEY`, `CREEM_WEBHOOK_SECRET` and the selected `CREEM_PRODUCT_*` IDs in your local secret store. Keep `CREEM_ENVIRONMENT=test`.
 3. Register `/api/webhooks/creem` in Creem. Subscribe to `checkout.completed`, the documented `subscription.*` lifecycle events, `refund.created` and `dispute.created`. For local forwarding, use the [official Creem CLI](https://docs.creem.io/code/cli) against your test account.
 4. Run `pnpm billing:catalog`. Only after the catalog matches, set `BILLING_ENABLED=true` to exercise test checkout.
 5. Complete the [release checklist](./docs/release-checklist.md). Switch to separate live products, key, webhook secret and database only when you are ready to accept real payments.
 
-A checkout return never grants access. Verified events reconcile canonical Creem API state. Recurring access requires a verified payment, an allowed status, an unexpired billing period and no hold. Period-end cancellation retains already-paid access; past-due/unpaid/paused/expired/canceled states fail closed. Refunds and disputes hold access conservatively for operator review.
+A checkout return never grants access. Verified events reconcile canonical Creem API state. A trial requires a completed checkout tied to the account and a canonical trialing subscription; access ends at its verified trial deadline unless a payment is later verified. Paid recurring access requires a verified payment, an allowed status, an unexpired billing period and no hold. Past-due/unpaid/paused/expired/canceled states fail closed. Refunds and disputes hold access conservatively for operator review.
 
 This starter uses Better Auth for identity and a small server-owned Creem integration for billing authorization. It does not expose generic customer/transaction API proxies to browsers. All customer IDs are derived from the signed-in account; subscription IDs are checked for ownership. See [billing design](./docs/billing.md) for concurrency, failure handling and limitations.
 

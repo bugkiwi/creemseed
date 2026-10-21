@@ -50,4 +50,4 @@ PostHog, Vercel Analytics and Speed Insights are independently selectable and di
 
 Vercel and standalone Node/Docker use the same Node.js application. Postgres should use a pooled runtime connection on serverless hosts. Apply migrations through the migration script before a release. Deployment selection records intent and informs installation; it does not provision cloud accounts or deploy automatically.
 
-Extend small domain modules as the product grows. Team billing, queues, metering, credit wallets and trial eligibility should each be designed when actually needed.
+Extend small domain modules as the product grows. Team billing, queues, metering, credit wallets and one-trial-per-person eligibility should each be designed when actually needed. Trial access in the core is bounded by a verified checkout and the canonical seven-day period.

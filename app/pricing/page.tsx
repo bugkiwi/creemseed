@@ -15,8 +15,9 @@ export default function PricingPage() {
         </p>
         <Pricing />
         <p className="small muted">
-          These are example plans for a starter application. Billing remains disabled until the
-          operator configures Creem products.
+          {process.env.CREEM_ENVIRONMENT === 'test' && process.env.BILLING_ENABLED === 'true'
+            ? 'Creem test mode: checkout uses test payment details and makes no real charge. These are example plans for this starter.'
+            : 'These are example plans for a starter application. Configure matching Creem products before enabling billing.'}
         </p>
       </main>
       <SiteFooter />

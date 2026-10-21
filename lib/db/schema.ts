@@ -111,6 +111,7 @@ export const subscriptions = pgTable(
     periodEnd: date('period_end'),
     cancelAtPeriodEnd: boolean('cancel_at_period_end').notNull().default(false),
     paymentVerified: boolean('payment_verified').notNull().default(false),
+    trialEndsAt: date('trial_ends_at'),
     held: boolean('held').notNull().default(false),
     syncedAt: date('synced_at').notNull().defaultNow(),
   },

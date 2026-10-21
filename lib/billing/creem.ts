@@ -17,7 +17,7 @@ export const productSchema = z.object({
   billing_type: z.string(),
   billing_period: z.string().nullable(),
   tax_mode: z.string(),
-  trial_period_days: z.number().nullable().optional(),
+  trial_period_days: z.number().int().nonnegative().nullable().optional(),
   pay_what_you_want: z.boolean().optional(),
   business_net_pricing: z.boolean().optional(),
   usage_prices: z.array(z.unknown()).optional(),
@@ -140,7 +140,7 @@ export function assertProduct(product: z.infer<typeof productSchema>, plan: Plan
     product.billing_type !== (plan.interval === 'once' ? 'onetime' : 'recurring') ||
     product.billing_period !== plan.interval ||
     product.tax_mode !== 'inclusive' ||
-    product.trial_period_days ||
+    (product.trial_period_days ?? 0) !== plan.trialDays ||
     product.pay_what_you_want ||
     product.business_net_pricing ||
     product.usage_prices?.length

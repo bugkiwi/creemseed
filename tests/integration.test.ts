@@ -56,11 +56,12 @@ test(
         id,
         mode: 'test',
         status: 'active',
-        price: 1900,
+        price: 990,
         currency: 'USD',
         billing_type: 'recurring',
         billing_period: 'every-month',
         tax_mode: 'inclusive',
+        trial_period_days: 7,
       }),
       createCheckout: async (input) => {
         createCalls++;
@@ -99,8 +100,8 @@ test(
         mode: 'test',
         type: 'invoice',
         status: 'paid',
-        amount: 1900,
-        amount_paid: 1900,
+        amount: 990,
+        amount_paid: 990,
         currency: 'USD',
         subscription: 'sub_Test',
         customer: 'cust_Test',
@@ -145,7 +146,7 @@ test(
               transaction: 'tran_Test',
               currency: 'USD',
               type: 'recurring',
-              amount_paid: 1900,
+              amount_paid: 990,
             },
           };
           const event = {
