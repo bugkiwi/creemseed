@@ -42,7 +42,7 @@
     "next": "16.4.0",
     "postgres": "3.4.5",
     "posthog-js": "1.438.9",
-    "radix-ui": "1.4.2",
+    "radix-ui": "1.8.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-markdown": "^10.1.0",
