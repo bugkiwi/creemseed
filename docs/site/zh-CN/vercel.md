@@ -12,7 +12,7 @@ GitHub Deploy 按钮创建无需凭据的演示，默认 `DEMO_MODE=true`、`BIL
 
 ## 3. 添加应用配置和服务凭据
 
-打开 **Project → Settings → Environment Variables**。添加 `BETTER_AUTH_SECRET`、`DATABASE_URL`、`NEXT_PUBLIC_APP_URL`、`DEMO_MODE=false` 和 `TRUSTED_PROXY=vercel`。`NEXT_PUBLIC_APP_URL` 填准确的 HTTPS 应用 origin。邮件、OAuth 和收款只添加实际选择的服务所需变量。
+打开 **Project → Settings → Environment Variables**。添加 `BETTER_AUTH_SECRET`、`DATABASE_URL`、`NEXT_PUBLIC_APP_URL`、`DEMO_MODE=false`、`TRUSTED_PROXY=vercel`，以及管理员邮箱列表 `ADMIN_EMAILS`（多个地址用逗号分隔）。`ADMIN_EMAILS` 仅供服务端使用，不要加 `NEXT_PUBLIC_` 前缀。`NEXT_PUBLIC_APP_URL` 填准确的 HTTPS 应用 origin。邮件、OAuth 和收款只添加实际选择的服务所需变量。
 
 使用邮箱密码登录时，配置 Resend 并验证发件域名。使用 Google 或 GitHub 登录时，登记准确的正式环境回调地址：
 
@@ -44,7 +44,7 @@ pnpm db:migrate
 
 只将变量授权给确实需要的 **Preview** 或 **Production** 环境。数据库、认证密钥、邮件、Creem key、Webhook secret 和商品 ID 应分别使用不同值。保存后创建新部署；更改 Vercel 环境变量不会修改已有部署。
 
-在 Preview 中验证注册与验证邮件、选择的 OAuth provider、用户工作台、Test 结账、签名 Webhook、试用期和后台收款工具。排查配置时，可在可信本地环境运行 `pnpm env:check` 和 `pnpm billing:catalog`。配置检查通过不等于端到端的第三方服务投递已验证。
+在 Preview 中验证注册与验证邮件、选择的 OAuth provider、用户工作台、Test 结账、签名 Webhook、试用期和后台收款工具。`ADMIN_EMAILS` 中的邮箱完成验证后，首次访问 `/admin` 时会写入数据库管理员角色并记录审计日志。排查配置时，可在可信本地环境运行 `pnpm env:check` 和 `pnpm billing:catalog`。配置检查通过不等于端到端的第三方服务投递已验证。
 
 在选择服务、于 `starter.config.json` 开启对应开关、配置访客同意并重新构建之前，保持可选分析功能关闭。PostHog 使用 `NEXT_PUBLIC_POSTHOG_KEY`，以及可选的 `NEXT_PUBLIC_POSTHOG_HOST`；Vercel Analytics 和 Speed Insights 使用 Vercel 项目开关及应用 feature flag，不需要环境 secret。
 
@@ -55,7 +55,7 @@ pnpm db:migrate
 - 部署邮箱密码登录前，验证邮件发件域名。
 - OAuth callback 与 Production 域名完全一致。
 - Test 流程验证通过后，单独配置 Creem Live 商品、key 与 Webhook。
-- 仅为预期的已验证账户授予管理员权限。
+- `ADMIN_EMAILS` 只包含预期的管理员邮箱；每个账号都必须先完成邮箱验证。
 - 检查可选分析开关和访客同意流程。
 
 Creem 订阅流程和 Live 环境见 [Creem 指南](/docs/creem)。开始真实收款前，请阅读[部署运维说明](https://github.com/bugkiwi/creemseed/blob/main/docs/deployment.md)和[发布检查清单](https://github.com/bugkiwi/creemseed/blob/main/docs/release-checklist.md)。

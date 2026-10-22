@@ -12,7 +12,7 @@ Create a Postgres database with a provider such as Neon. Choose a region near th
 
 ## 3. Add application settings and provider secrets
 
-Open **Project → Settings → Environment Variables**. Add `BETTER_AUTH_SECRET`, `DATABASE_URL`, `NEXT_PUBLIC_APP_URL`, `DEMO_MODE=false` and `TRUSTED_PROXY=vercel`. Set `NEXT_PUBLIC_APP_URL` to the exact HTTPS origin of the application. Add only the email, OAuth and billing values for providers you selected.
+Open **Project → Settings → Environment Variables**. Add `BETTER_AUTH_SECRET`, `DATABASE_URL`, `NEXT_PUBLIC_APP_URL`, `DEMO_MODE=false`, `TRUSTED_PROXY=vercel`, and `ADMIN_EMAILS` with a comma-separated list of intended administrator emails. `ADMIN_EMAILS` is server-only; do not prefix it with `NEXT_PUBLIC_`. Set `NEXT_PUBLIC_APP_URL` to the exact HTTPS origin of the application. Add only the email, OAuth and billing values for providers you selected.
 
 For password sign-in, configure Resend and verify the sender domain. For Google or GitHub, register the exact production callback URL:
 
@@ -44,7 +44,7 @@ Run migrations before directing a new deployment at a schema it needs. Keep migr
 
 Assign each variable only to the necessary **Preview** or **Production** environment. Use separate values for the database, auth secret, email, Creem key, webhook secret and product IDs. Save the values and create a fresh deployment; changing Vercel environment variables does not update an existing build.
 
-In Preview, verify sign-up and verification email, selected OAuth providers, dashboard access, Test checkout, the signed webhook, trial period and admin billing tools. Run `pnpm env:check` and `pnpm billing:catalog` from a trusted local environment when diagnosing configuration. A passing configuration check does not prove end-to-end provider delivery.
+In Preview, verify sign-up and verification email, selected OAuth providers, dashboard access, Test checkout, the signed webhook, trial period and admin billing tools. Each verified account listed in `ADMIN_EMAILS` is promoted in the database when it first opens `/admin`; the grant is audited. Run `pnpm env:check` and `pnpm billing:catalog` from a trusted local environment when diagnosing configuration. A passing configuration check does not prove end-to-end provider delivery.
 
 Keep optional analytics disabled until you have selected a provider, enabled its flag in `starter.config.json`, configured consent and rebuilt. PostHog uses `NEXT_PUBLIC_POSTHOG_KEY` and optionally `NEXT_PUBLIC_POSTHOG_HOST`; Vercel Analytics and Speed Insights use Vercel project settings and feature flags rather than environment secrets.
 
@@ -55,7 +55,7 @@ Keep optional analytics disabled until you have selected a provider, enabled its
 - Verified sender domain for deployed email/password sign-in.
 - OAuth callbacks exactly match the Production domain.
 - Creem Live products, key and webhook configured separately after Test flow validation.
-- Administrator access granted only to the intended verified account.
+- `ADMIN_EMAILS` lists only intended administrators; each account must verify its email before accessing `/admin`.
 - Optional analytics flags and consent behavior reviewed.
 
 For Creem lifecycle and Live mode, see the [Creem guide](/docs/creem). Review [deployment operations](https://github.com/bugkiwi/creemseed/blob/main/docs/deployment.md) and the [release checklist](https://github.com/bugkiwi/creemseed/blob/main/docs/release-checklist.md) before accepting real payments.

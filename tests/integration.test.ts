@@ -26,12 +26,15 @@ test(
     process.env.CREEM_PRODUCT_LIFETIME = 'prod_TestLifetime';
     process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000';
     process.env.BETTER_AUTH_SECRET = 'fixture-only-auth-'.repeat(4);
+    const originalAdminEmails = process.env.ADMIN_EMAILS;
+    process.env.ADMIN_EMAILS = '';
     const migration = spawnSync('pnpm', ['db:migrate'], { env: process.env, encoding: 'utf8' });
     assert.equal(migration.status, 0, 'isolated database migrations must succeed');
     const { db } = await import('../lib/db');
     const schema = await import('../lib/db/schema');
     const service = await import('../lib/billing/service');
     const events = await import('../lib/billing/events');
+    const { provisionConfiguredAdmin } = await import('../lib/auth/admin-role');
     const id = randomUUID(),
       secondId = randomUUID();
     const [owner, other] = await db
@@ -115,6 +118,25 @@ test(
       },
     };
     try {
+      await t.test('verified allowlisted emails are promoted and audited once', async () => {
+        process.env.ADMIN_EMAILS = ` ${owner.email.toUpperCase()} , ${other.email} `;
+        const [first, second] = await Promise.all([
+          provisionConfiguredAdmin(owner),
+          provisionConfiguredAdmin(owner),
+        ]);
+        assert.equal(first?.role, 'admin');
+        assert.equal(second?.role, 'admin');
+        const grants = await db
+          .select()
+          .from(schema.auditLogs)
+          .where(eq(schema.auditLogs.targetId, owner.id));
+        assert.equal(grants.filter((entry) => entry.action === 'admin.grant.env').length, 1);
+        assert.equal(
+          (await provisionConfiguredAdmin({ ...other, emailVerified: false }))?.role,
+          'user',
+        );
+      });
+      process.env.ADMIN_EMAILS = '';
       await t.test(
         'concurrent checkout creates a single durable intent and reuses its URL',
         async () => {
@@ -398,6 +420,8 @@ test(
       await db.delete(schema.user).where(eq(schema.user.id, other.id));
       const client = (db as unknown as { $client: { end: () => Promise<void> } }).$client;
       await client.end();
+      if (originalAdminEmails === undefined) delete process.env.ADMIN_EMAILS;
+      else process.env.ADMIN_EMAILS = originalAdminEmails;
     }
   },
 );

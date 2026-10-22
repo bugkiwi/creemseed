@@ -5,6 +5,7 @@ import { enabledPlans } from '../lib/billing/plans';
 import { environment } from '../lib/billing/creem';
 import { validateSettings } from './setup-schema.mjs';
 import { isDemoMode } from '../lib/deployment';
+import { hasValidAdminEmailList } from '../lib/auth/admin-emails';
 const errors: string[] = [],
   warnings: string[] = [];
 const need = (key: string) => {
@@ -42,6 +43,8 @@ try {
     );
   if (!['true', 'false'].includes(process.env.BILLING_ENABLED || 'false'))
     errors.push('BILLING_ENABLED must be true or false.');
+  if (!hasValidAdminEmailList())
+    errors.push('ADMIN_EMAILS must be a comma-separated list of unique email addresses.');
   if (process.env.BILLING_ENABLED === 'true') {
     if (demo) errors.push('BILLING_ENABLED must remain false in demo mode.');
     need('CREEM_API_KEY');

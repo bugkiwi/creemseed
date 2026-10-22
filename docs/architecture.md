@@ -28,7 +28,7 @@ Signed webhook   → event journal → user lock → canonical API state → acc
 
 ## Identity
 
-Better Auth exclusively handles sessions and credentials. An account is identified by its immutable user ID. Roles are additional non-input fields, re-read from the database for admin actions. Registration never promotes a role. CLI role changes invalidate sessions and write an audit record. No legacy JWT/password stack is retained.
+Better Auth exclusively handles sessions and credentials. An account is identified by its immutable user ID. Roles are additional non-input fields, re-read from the database for admin actions. Registration never promotes a role. A verified account in the server-only `ADMIN_EMAILS` bootstrap list is promoted in the database on its first admin request and the change is audited; explicit CLI role changes also write an audit record and invalidate sessions. No legacy JWT/password stack is retained.
 
 Email/password requires verified email. Console email is limited to development localhost. Optional social providers are only configured when selected. Automatic account linking is off; extending it requires an explicit security design.
 

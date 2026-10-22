@@ -7,6 +7,23 @@ import { db } from '@/lib/db';
 import { user } from '@/lib/db/schema';
 import { HttpError } from '@/lib/http';
 import { isDemoMode } from '@/lib/deployment';
+import { provisionConfiguredAdmin } from './admin-role';
+
+const userFields = {
+  id: user.id,
+  name: user.name,
+  email: user.email,
+  emailVerified: user.emailVerified,
+  role: user.role,
+};
+
+type UserRecord = {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  role: string;
+};
 
 export const currentUser = cache(async () => {
   if (isDemoMode()) return null;
@@ -14,13 +31,7 @@ export const currentUser = cache(async () => {
   if (!session) return null;
   // Read authoritative roles on every request, including after admin revocation.
   const [record] = await db
-    .select({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      emailVerified: user.emailVerified,
-      role: user.role,
-    })
+    .select(userFields)
     .from(user)
     .where(eq(user.id, session.user.id))
     .limit(1);
@@ -39,11 +50,13 @@ export async function requireVerifiedUser() {
   if (!user.emailVerified) throw new HttpError(403, 'Verify your email before managing billing.');
   return user;
 }
+
 export async function requireAdmin(page = false) {
-  const user = await requireUser(page);
-  if (user.role !== 'admin' || !user.emailVerified) {
+  const account = await requireUser(page);
+  const admin = await provisionConfiguredAdmin(account);
+  if (!admin || admin.role !== 'admin' || !admin.emailVerified) {
     if (page) redirect('/dashboard');
     throw new HttpError(403, 'Administrator access required.');
   }
-  return user;
+  return admin;
 }

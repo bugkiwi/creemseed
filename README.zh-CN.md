@@ -74,11 +74,13 @@ pnpm dev
 
 打开 **http://localhost:3000**，注册并验证邮箱。本地 console 邮件模式的验证链接显示在开发终端；部署后的邮箱密码登录必须选择 Resend 并配置发件域名，生产环境不会输出验证链接。
 
+将仅供服务端使用的 `ADMIN_EMAILS` 设置为逗号分隔的邮箱列表，例如 `you@example.com,ops@example.com`。列表中的账号注册并完成验证后，访问 `/admin` 时会自动获得数据库中的管理员角色，并记录审计日志。在 Vercel 的 **Settings → Environment Variables** 中为对应环境添加该变量，然后重新部署。删除邮箱并重新部署不会自动移除已写入数据库的角色；需要先移除变量中的邮箱，再运行下面的撤权命令。
+
 ```sh
 pnpm admin:grant --email you@example.com
 ```
 
-重新登录后访问 `/admin`。该命令仅接受已存在且已验证的账户，会撤销其现有会话并记录权限变更。没有默认管理员或共用密码；撤权使用 `pnpm admin:revoke --email you@example.com`。
+该命令仍可用于显式授予列表外账号权限。它仅接受已存在且已验证的账户，会撤销其现有会话并记录权限变更。没有默认管理员或共用密码；撤权使用 `pnpm admin:revoke --email you@example.com`。
 
 ## 通过 AI 安装
 

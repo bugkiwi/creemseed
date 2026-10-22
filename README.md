@@ -74,11 +74,13 @@ pnpm dev
 
 Open **http://localhost:3000**. Register and verify your email. In console email mode, open the verification link printed in your local development terminal. For deployed password login, choose Resend and configure its sender domain; console delivery is intentionally unavailable in production.
 
+Set the server-only `ADMIN_EMAILS` variable to a comma-separated list, for example `you@example.com,ops@example.com`. After each listed account exists and is verified, opening `/admin` promotes it to the database admin role and records the change. On Vercel, add the same variable under **Settings → Environment Variables** for the intended environment, then redeploy. Removing an address from the variable does not remove an already stored role; remove it, redeploy, then revoke that role with the command below.
+
 ```sh
 pnpm admin:grant --email you@example.com
 ```
 
-Sign in again, then open `/admin`. The command requires an existing verified account, invalidates its sessions and records the role change. There is no seeded admin or shared password. Use `pnpm admin:revoke --email you@example.com` to revoke the role.
+This command remains available for explicit role changes outside the allowlist. It requires an existing verified account, invalidates its sessions and records the role change. There is no seeded admin or shared password. Use `pnpm admin:revoke --email you@example.com` to revoke a role.
 
 ## Start with an AI assistant
 
