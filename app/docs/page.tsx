@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import { DocsPage } from '@/components/docs/docs-page';
-import { documentationMetadata, normalizeDocumentationLanguage } from '@/lib/docs';
+import {
+  documentationMetadata,
+  localizedDocumentationPath,
+  normalizeDocumentationLanguage,
+} from '@/lib/docs';
 
 export async function generateMetadata({
   searchParams,
@@ -9,7 +13,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = await searchParams;
   const language = normalizeDocumentationLanguage(lang);
-  return { ...documentationMetadata('overview', language), robots: { index: true, follow: true } };
+  return {
+    ...documentationMetadata('overview', language),
+    alternates: { canonical: localizedDocumentationPath('overview', language) },
+    robots: { index: true, follow: true },
+  };
 }
 
 export default async function DocumentationHome({

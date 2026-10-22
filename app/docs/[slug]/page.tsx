@@ -5,6 +5,7 @@ import {
   documentationMetadata,
   documentationSlugs,
   isDocumentationSlug,
+  localizedDocumentationPath,
   normalizeDocumentationLanguage,
 } from '@/lib/docs';
 
@@ -22,7 +23,11 @@ export async function generateMetadata({
   const [{ slug }, { lang }] = await Promise.all([params, searchParams]);
   if (!isDocumentationSlug(slug)) return {};
   const language = normalizeDocumentationLanguage(lang);
-  return { ...documentationMetadata(slug, language), robots: { index: true, follow: true } };
+  return {
+    ...documentationMetadata(slug, language),
+    alternates: { canonical: localizedDocumentationPath(slug, language) },
+    robots: { index: true, follow: true },
+  };
 }
 
 export default async function DocumentationArticle({

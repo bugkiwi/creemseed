@@ -1,6 +1,6 @@
 # 环境变量与第三方服务配置
 
-本指南逐项说明 `.env.example`、安装向导生成的本地变量，以及 Vercel 自动提供的值。也可以切换到 [English](/docs/environment?lang=en)，默认显示英文。
+本指南逐项说明 `.env.example`、安装向导生成的本地变量，以及 Vercel 自动提供的值。也可以切换到 [English](/en/docs/environment)，默认显示英文。
 
 ## 开始前
 

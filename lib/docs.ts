@@ -6,6 +6,17 @@ import { join } from 'node:path';
 export const documentationLanguages = ['en', 'zh-CN'] as const;
 export type DocumentationLanguage = (typeof documentationLanguages)[number];
 
+export function isDocumentationLanguage(value?: string | null): value is DocumentationLanguage {
+  return documentationLanguages.some((language) => language === value);
+}
+
+export function localizedDocumentationPath(
+  slug: DocumentationPageSlug,
+  language: DocumentationLanguage,
+) {
+  return `/${language}/docs${slug === 'overview' ? '' : `/${slug}`}`;
+}
+
 export const documentationSlugs = [
   'features',
   'manual-install',
@@ -85,7 +96,8 @@ const metadata: Record<DocumentationLanguage, Record<DocumentationPageSlug, DocM
 };
 
 export function normalizeDocumentationLanguage(value?: string | string[]): DocumentationLanguage {
-  return value === 'zh-CN' ? 'zh-CN' : 'en';
+  const language = Array.isArray(value) ? value[0] : value;
+  return isDocumentationLanguage(language) ? language : 'en';
 }
 
 export function isDocumentationSlug(value: string): value is DocumentationSlug {
@@ -105,8 +117,8 @@ export function documentationGroups(language: DocumentationLanguage) {
       {
         label: '了解模板',
         items: [
-          { slug: 'overview' as const, title: '文档首页', href: '/docs' },
-          { slug: 'features' as const, title: '功能说明', href: '/docs/features' },
+          { slug: 'overview' as const, title: '文档首页' },
+          { slug: 'features' as const, title: '功能说明' },
         ],
       },
       {
@@ -115,17 +127,16 @@ export function documentationGroups(language: DocumentationLanguage) {
           {
             slug: 'manual-install' as const,
             title: '手动与 CLI 安装',
-            href: '/docs/manual-install',
           },
-          { slug: 'ai-install' as const, title: 'AI 安装 Prompt', href: '/docs/ai-install' },
+          { slug: 'ai-install' as const, title: 'AI 安装 Prompt' },
         ],
       },
       {
         label: '配置与发布',
         items: [
-          { slug: 'environment' as const, title: '环境变量', href: '/docs/environment' },
-          { slug: 'creem' as const, title: 'Creem 收款', href: '/docs/creem' },
-          { slug: 'vercel' as const, title: 'Vercel 部署', href: '/docs/vercel' },
+          { slug: 'environment' as const, title: '环境变量' },
+          { slug: 'creem' as const, title: 'Creem 收款' },
+          { slug: 'vercel' as const, title: 'Vercel 部署' },
         ],
       },
     ];
@@ -134,23 +145,23 @@ export function documentationGroups(language: DocumentationLanguage) {
     {
       label: 'Explore',
       items: [
-        { slug: 'overview' as const, title: 'Documentation home', href: '/docs' },
-        { slug: 'features' as const, title: 'Features', href: '/docs/features' },
+        { slug: 'overview' as const, title: 'Documentation home' },
+        { slug: 'features' as const, title: 'Features' },
       ],
     },
     {
       label: 'Install',
       items: [
-        { slug: 'manual-install' as const, title: 'Manual and CLI', href: '/docs/manual-install' },
-        { slug: 'ai-install' as const, title: 'AI setup prompt', href: '/docs/ai-install' },
+        { slug: 'manual-install' as const, title: 'Manual and CLI' },
+        { slug: 'ai-install' as const, title: 'AI setup prompt' },
       ],
     },
     {
       label: 'Configure',
       items: [
-        { slug: 'environment' as const, title: 'Environment variables', href: '/docs/environment' },
-        { slug: 'creem' as const, title: 'Creem billing', href: '/docs/creem' },
-        { slug: 'vercel' as const, title: 'Vercel deployment', href: '/docs/vercel' },
+        { slug: 'environment' as const, title: 'Environment variables' },
+        { slug: 'creem' as const, title: 'Creem billing' },
+        { slug: 'vercel' as const, title: 'Vercel deployment' },
       ],
     },
   ];

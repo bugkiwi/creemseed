@@ -6,6 +6,8 @@ import { SiteHeader } from '@/components/site-header';
 import {
   documentationGroups,
   documentationMetadata,
+  isDocumentationLanguage,
+  localizedDocumentationPath,
   type DocumentationLanguage,
   type DocumentationPageSlug,
   readDocumentation,
@@ -13,10 +15,13 @@ import {
 import { CopyPromptButton } from './copy-prompt-button';
 
 function localizedHref(href: string | undefined, language: DocumentationLanguage) {
-  if (!href || !href.startsWith('/docs')) return href;
+  if (!href || !(href === '/docs' || href.startsWith('/docs/') || href.startsWith('/docs?')))
+    return href;
   const url = new URL(href, 'https://docs.invalid');
-  if (!url.searchParams.has('lang')) url.searchParams.set('lang', language);
-  return `${url.pathname}${url.search}${url.hash}`;
+  const linkedLanguage = url.searchParams.get('lang');
+  const targetLanguage = isDocumentationLanguage(linkedLanguage) ? linkedLanguage : language;
+  url.searchParams.delete('lang');
+  return `/${targetLanguage}${url.pathname}${url.search}${url.hash}`;
 }
 
 export async function DocsPage({
@@ -30,7 +35,6 @@ export async function DocsPage({
   const groups = documentationGroups(language);
   const title = documentationMetadata(slug, language).title;
   const chinese = language === 'zh-CN';
-  const switchHref = slug === 'overview' ? '/docs' : `/docs/${slug}`;
   const heading = markdown.match(/^#\s+(.+)$/m)?.[1] ?? title;
   const body = markdown.replace(/^#\s+.+\n+/, '');
 
@@ -39,29 +43,12 @@ export async function DocsPage({
       <SiteHeader />
       <main id="main-content" className="docs-page wrap" lang={language}>
         <div className="docs-toolbar">
-          <Link className="docs-home-link" href={`/docs?lang=${language}`}>
+          <Link className="docs-home-link" href={localizedDocumentationPath('overview', language)}>
             <span className="docs-mark" aria-hidden="true">
               C
             </span>
             <span>{chinese ? '文档' : 'Documentation'}</span>
           </Link>
-          <nav aria-label={chinese ? '文档语言' : 'Documentation language'}>
-            <Link
-              href={`${switchHref}?lang=en`}
-              lang="en"
-              aria-current={language === 'en' ? 'page' : undefined}
-            >
-              EN
-            </Link>
-            <span aria-hidden="true">/</span>
-            <Link
-              href={`${switchHref}?lang=zh-CN`}
-              lang="zh-CN"
-              aria-current={language === 'zh-CN' ? 'page' : undefined}
-            >
-              简体中文
-            </Link>
-          </nav>
         </div>
         <div className="docs-layout">
           <aside
@@ -75,7 +62,7 @@ export async function DocsPage({
                   {group.items.map((item) => (
                     <li key={item.slug}>
                       <Link
-                        href={`${item.href}?lang=${language}`}
+                        href={localizedDocumentationPath(item.slug, language)}
                         aria-current={slug === item.slug ? 'page' : undefined}
                       >
                         {item.title}
@@ -107,6 +94,27 @@ export async function DocsPage({
             </ReactMarkdown>
           </article>
         </div>
+        <nav
+          className="docs-language-switch"
+          aria-label={chinese ? '文档语言' : 'Documentation language'}
+        >
+          <span>{chinese ? '语言' : 'Language'}</span>
+          <Link
+            href={localizedDocumentationPath(slug, 'en')}
+            lang="en"
+            aria-current={language === 'en' ? 'page' : undefined}
+          >
+            English
+          </Link>
+          <span aria-hidden="true">/</span>
+          <Link
+            href={localizedDocumentationPath(slug, 'zh-CN')}
+            lang="zh-CN"
+            aria-current={language === 'zh-CN' ? 'page' : undefined}
+          >
+            简体中文
+          </Link>
+        </nav>
       </main>
       <SiteFooter />
     </>

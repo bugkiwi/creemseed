@@ -9,7 +9,7 @@ export function SiteFooter() {
         © {new Date().getFullYear()} {site.name}
       </span>
       <nav aria-label="Footer">
-        <Link href="/docs">Documentation</Link>
+        <Link href="/en/docs">Documentation</Link>
         <Link href="/terms">Terms</Link>
         <Link href="/privacy">Privacy</Link>
         <Link href="/refunds">Refunds</Link>

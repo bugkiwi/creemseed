@@ -8,4 +8,4 @@ The `docs/` directory keeps public product documentation separate from contribut
 
 The docs route is implemented in `app/docs/` and `components/docs/`; the catalog, locale selection and Markdown source allowlist live in `lib/docs.ts`. Keep source paths allowlisted rather than deriving arbitrary filesystem paths from request parameters. Next.js standalone output tracing for these routes is configured in `next.config.ts`.
 
-The site defaults to English. Chinese pages use `?lang=zh-CN`, and every public documentation link should retain the selected language when it points to another `/docs` route.
+The site defaults to English. Canonical documentation URLs put the locale first, such as `/en/docs/environment` and `/zh-CN/docs/environment`. Legacy `/docs?lang=...` URLs redirect to the corresponding locale-prefixed route. Keep public documentation links in the selected locale when they point to another docs page.

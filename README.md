@@ -6,7 +6,7 @@ An English-first, MIT-licensed Next.js starter for products paid through Creem, 
 
 [Online test app](https://creemseed.vercel.app) · [Use this template](https://github.com/bugkiwi/creemseed/generate) · [GitHub](https://github.com/bugkiwi/creemseed)
 
-[Documentation](https://creemseed.vercel.app/docs) · [Environment guide source](./docs/site/en/environment.md)
+[Documentation](https://creemseed.vercel.app/en/docs) · [Environment guide source](./docs/site/en/environment.md)
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbugkiwi%2Fcreemseed&project-name=creemseed&repository-name=creemseed&env=DEMO_MODE%2CBILLING_ENABLED&envDefaults=%7B%22DEMO_MODE%22%3A%22true%22%2C%22BILLING_ENABLED%22%3A%22false%22%7D&envDescription=Public+demo+only.+Accounts%2C+billing%2C+and+webhooks+are+disabled.+Follow+the+deployment+guide+to+enable+your+own+application.&envLink=https%3A%2F%2Fgithub.com%2Fbugkiwi%2Fcreemseed%2Fblob%2Fmain%2Fdocs%2Fdeployment.md)
 
@@ -94,7 +94,7 @@ The assistant must ask about the same choices listed above, including less typic
 node scripts/setup.mjs --config /absolute/path/to/choices.json --yes
 ```
 
-See [docs/setup.md](./docs/setup.md) for the schema, unattended installation and recovery, and the [environment guide](https://creemseed.vercel.app/docs) for where to get each `.env` value and how to configure it in Vercel. `--yes` requires an explicit config; it does not silently choose a billing or authentication model. Use `--skip-install` or `--skip-db` to defer those steps.
+See [docs/setup.md](./docs/setup.md) for the schema, unattended installation and recovery, and the [environment guide](https://creemseed.vercel.app/en/docs/environment) for where to get each `.env` value and how to configure it in Vercel. `--yes` requires an explicit config; it does not silently choose a billing or authentication model. Use `--skip-install` or `--skip-db` to defer those steps.
 
 ## Connect Creem
 
@@ -114,7 +114,7 @@ This starter uses Better Auth for identity and a small server-owned Creem integr
 - Credentials: `.env` locally, deployment secret settings remotely. `.env.example` documents variable names only.
 - Product catalog: `lib/billing/plans.ts`. Keep historical product IDs mapped when evolving your catalog.
 - Product code: `app/dashboard`. Use `requirePaidUser()` from `lib/billing/access.ts` at every paid server boundary.
-- UI: `app/globals.css`, `components/ui`, `components/brand.tsx`, `app/icon.svg`. English is the default interface; the Chinese README does not introduce runtime locale routing.
+- UI: `app/globals.css`, `components/ui`, `components/brand.tsx`, `app/icon.svg`. The application interface defaults to English; the documentation supports English and Chinese locale routes at `/{locale}/docs/...`.
 - Replace `/terms`, `/privacy`, `/refunds` and `/contact` placeholders with your own reviewed policies and contact details before selling.
 - Optional analysis SDKs stay unloaded when disabled. When enabled they load only after consent on allowlisted public routes. Query strings, auth pages, account pages and admin pages are excluded; session replay is off.
 

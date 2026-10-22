@@ -1,6 +1,6 @@
 # Environment variables and provider setup
 
-This guide explains every variable in `.env.example`, the local-only values created by the setup wizard, and the Vercel values provided by the platform. The page is also available in [简体中文](/docs/environment?lang=zh-CN). English is the default.
+This guide explains every variable in `.env.example`, the local-only values created by the setup wizard, and the Vercel values provided by the platform. The page is also available in [简体中文](/zh-CN/docs/environment). English is the default.
 
 ## Before you start
 

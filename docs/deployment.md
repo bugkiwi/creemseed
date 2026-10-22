@@ -1,6 +1,6 @@
 # Deployment
 
-See the [environment configuration guide](https://creemseed.vercel.app/docs) for each `.env` value, provider dashboard path, Test/Live separation, and Vercel environment steps.
+See the [environment configuration guide](https://creemseed.vercel.app/en/docs) for each `.env` value, provider dashboard path, Test/Live separation, and Vercel environment steps.
 
 ## Online test app and credential-free copies
 

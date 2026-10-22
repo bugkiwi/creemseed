@@ -6,7 +6,7 @@
 
 [在线演示](https://creemseed.vercel.app) · [使用此模板](https://github.com/bugkiwi/creemseed/generate) · [GitHub](https://github.com/bugkiwi/creemseed)
 
-[文档中心](https://creemseed.vercel.app/docs?lang=zh-CN) · [环境指南 Markdown](./docs/site/zh-CN/environment.md)
+[文档中心](https://creemseed.vercel.app/zh-CN/docs) · [环境指南 Markdown](./docs/site/zh-CN/environment.md)
 
 [![部署到 Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbugkiwi%2Fcreemseed&project-name=creemseed&repository-name=creemseed&env=DEMO_MODE%2CBILLING_ENABLED&envDefaults=%7B%22DEMO_MODE%22%3A%22true%22%2C%22BILLING_ENABLED%22%3A%22false%22%7D&envDescription=Public+demo+only.+Accounts%2C+billing%2C+and+webhooks+are+disabled.+Follow+the+deployment+guide+to+enable+your+own+application.&envLink=https%3A%2F%2Fgithub.com%2Fbugkiwi%2Fcreemseed%2Fblob%2Fmain%2Fdocs%2Fdeployment.md)
 
@@ -94,7 +94,7 @@ AI 需要先询问表格中的选择，包括仅社交登录、已有数据库�
 node scripts/setup.mjs --config /absolute/path/to/choices.json --yes
 ```
 
-配置结构、无人值守安装与恢复见 [docs/setup.md](./docs/setup.md)；每个 `.env` 变量的获取位置和 Vercel 设置步骤见[在线环境配置指南](https://creemseed.vercel.app/docs?lang=zh-CN)。`--yes` 必须提供完整配置，不会静默决定计费或认证方式。可通过 `--skip-install`、`--skip-db` 推迟相应步骤。
+配置结构、无人值守安装与恢复见 [docs/setup.md](./docs/setup.md)；每个 `.env` 变量的获取位置和 Vercel 设置步骤见[在线环境配置指南](https://creemseed.vercel.app/zh-CN/docs/environment)。`--yes` 必须提供完整配置，不会静默决定计费或认证方式。可通过 `--skip-install`、`--skip-db` 推迟相应步骤。
 
 ## 接入 Creem
 
@@ -114,7 +114,7 @@ node scripts/setup.mjs --config /absolute/path/to/choices.json --yes
 - 凭据：本地 `.env` 或部署平台 secret；`.env.example` 只登记变量和占位值。
 - 商品目录：`lib/billing/plans.ts`。调整目录时保留历史商品映射。
 - 产品功能：`app/dashboard`。每个付费操作的服务端边界调用 `lib/billing/access.ts` 中的 `requirePaidUser()`。
-- 界面：`app/globals.css`、`components/ui`、`components/brand.tsx`、`app/icon.svg`。默认英文；中文 README 不代表增加运行时中文路由。
+- 界面：`app/globals.css`、`components/ui`、`components/brand.tsx`、`app/icon.svg`。应用界面默认英文；文档支持 `/{locale}/docs/...` 形式的英文和中文路由。
 - 收款前用自己的政策和联系信息替换 `/terms`、`/privacy`、`/refunds`、`/contact` 占位页面。
 - 分析关闭时不加载 SDK；启用后只在获得同意的公开白名单页面加载。URL 查询参数、认证、账户和后台页面不采集，录屏关闭。
 

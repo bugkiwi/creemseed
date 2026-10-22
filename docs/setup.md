@@ -1,6 +1,6 @@
 # Setup contract
 
-For each environment variable, provider dashboard path, and Vercel setup step, see the [environment guide](https://creemseed.vercel.app/docs/environment) or the [English Markdown source](./site/en/environment.md).
+For each environment variable, provider dashboard path, and Vercel setup step, see the [environment guide](https://creemseed.vercel.app/en/docs/environment) or the [English Markdown source](./site/en/environment.md).
 
 Both installation paths call `scripts/setup.mjs` and `scripts/setup-schema.mjs`. There is no separate AI-generated installer with different defaults.
 

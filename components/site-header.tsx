@@ -13,7 +13,7 @@ export async function SiteHeader() {
       <Brand />
       <nav aria-label="Main navigation">
         <Link href="/pricing">Pricing</Link>
-        <Link href="/docs">Documentation</Link>
+        <Link href="/en/docs">Documentation</Link>
         {demo ? null : <Link href="/dashboard">Dashboard</Link>}
         {demo || !user ? (
           <Button asChild variant="outline">
